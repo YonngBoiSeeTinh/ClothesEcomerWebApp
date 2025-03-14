@@ -1,0 +1,47 @@
+{
+ 
+    "version": "0.2.0",
+    "configurations": [
+    
+        {
+            "name": "GOSY",
+            "cwd": "GOSY",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "GOSY (profile mode)",
+            "cwd": "GOSY",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "clothes_shop_admin (release mode)",
+            "cwd": "clothes_shop_admin",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "clothes_shop_admin",
+            "cwd": "clothes_shop_admin",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "clothes_shop_admin (profile mode)",
+            "cwd": "clothes_shop_admin",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "GOSY (release mode)",
+            "cwd": "GOSY",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
