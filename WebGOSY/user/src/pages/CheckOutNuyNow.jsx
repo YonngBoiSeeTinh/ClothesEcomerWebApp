@@ -3,6 +3,7 @@ import { API_URL } from "../config.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { notification, message } from "antd";
 import PathNames from "../PathNames.js";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 const CheckoutBuyNow = () => {
     const location = useLocation();
@@ -23,7 +24,66 @@ const CheckoutBuyNow = () => {
     const [shippingOption, setShippingOption] = useState("store");
     const [totalAmount, setTotalAmount] = useState(productBuyNow?.price);
     const [notes, setNotes] = useState(""); // Lưu trữ ghi chú từ người dùng
-
+  
+    // Hàm lấy dữ liệu color
+    const fetchColorSize = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/ColorSizes/${productBuyNow.colorSizeId}`);
+            if (response.status === 200) {
+                const data = response.data;
+                console.log("Fetched ColorSizes:", data);
+                return data
+            } else {
+                console.error(
+                    `Failed to fetch ColorSizes: ${response.status} ${response.statusText}`
+                );
+                return {}
+            }
+        } catch (error) {
+            console.error("Error fetching ColorSizes:", error);
+            return {}
+        }
+    };
+    const updateStock = async (colorSizeId, quantity) => {
+        const updateColorSize = { ...await fetchColorSize(colorSizeId) };
+        updateColorSize.quantity -= quantity;
+        if(updateColorSize){
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/ColorSizes/${colorSizeId}`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json", 
+                        },
+                        body: JSON.stringify(updateColorSize),
+                    }
+                );
+                console.log("update response", response);
+                console.log(response);
+                if (response.ok) {
+                    notification.success({
+                        message: 'Thành công',
+                        description: "Số lượng đã được cập nhật thành công",
+                        duration: 4,
+                        placement: "bottomRight",
+                        showProgress: true,
+                        pauseOnHover: true
+                    });
+                }
+            } catch (error) {
+                console.error("Lỗi khi cập nhật Số lượng:", error);
+                notification.error({
+                    message: 'Thất bại',
+                    description: "Lỗi khi cập nhật Số lượng: " + error.message,
+                    duration: 4,
+                    placement: "bottomRight",
+                    showProgress: true,
+                    pauseOnHover: true
+                });
+            }
+        }
+    };
     const handleContinue = async () => {
         const finalAmount = totalAmount;
 
@@ -150,6 +210,7 @@ const CheckoutBuyNow = () => {
                     }
                 );
                 if (orderDetailResponse.status === 201) {
+                    updateStock(productBuyNow.colorSizeId, productBuyNow.quantity)
                     notification.success({
                         message: "Thành công!",
                         description: "Đơn hàng mới đã được tạo",

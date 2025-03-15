@@ -3,7 +3,7 @@ import { API_URL } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { notification } from "antd";
 import PathNames from "../PathNames.js";
-
+import axios from "axios";
 const Checkout = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -46,8 +46,8 @@ const Checkout = () => {
 
         if (location.state?.cartItems) {
             setCartItems(location.state.cartItems);
-            console.log('cartItem', location.state.cartItems);
             setTotalAmount(location.state.total);
+            console.log('cartItems' ,location.state.cartItems);
         } else {
             navigate(PathNames.CART);
         }
@@ -159,11 +159,71 @@ const Checkout = () => {
         setDiscountedAmount(0);
     };
 
+    const fetchColorSize = async (colorSizeId) => {
+        try {
+            const response = await axios.get(`${API_URL}/api/ColorSizes/${colorSizeId}`);
+            if (response.status === 200) {
+                const data = response.data;
+                console.log("Fetched ColorSizes:", data);
+                return data
+            } else {
+                console.error(
+                    `Failed to fetch ColorSizes: ${response.status} ${response.statusText}`
+                );
+                return {}
+            }
+        } catch (error) {
+            console.error("Error fetching ColorSizes:", error);
+            return {}
+        }
+    };
+    const updateStock = async (colorSizeId, quantity) => {
+        const updateColorSize = { ...await fetchColorSize(colorSizeId) };
+        updateColorSize.quantity -= quantity;
+       
+        delete updateColorSize.updatedAt;
+        console.log("Updated ColorSize:", updateColorSize);
+        if(updateColorSize){
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/ColorSizes/${colorSizeId}`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json", 
+                        },
+                        body: JSON.stringify(updateColorSize),
+                    }
+                );
+                console.log("update color response", response);
+             
+                if (response.ok) {
+                    notification.success({
+                        message: 'Thành công',
+                        description: "Số lượng đã được cập nhật thành công",
+                        duration: 4,
+                        placement: "bottomRight",
+                        showProgress: true,
+                        pauseOnHover: true
+                    });
+                }
+            } catch (error) {
+                console.error("Lỗi khi cập nhật Số lượng:", error);
+                notification.error({
+                    message: 'Thất bại',
+                    description: "Lỗi khi cập nhật Số lượng: " + error.message,
+                    duration: 4,
+                    placement: "bottomRight",
+                    showProgress: true,
+                    pauseOnHover: true
+                });
+            }
+        }
+    };
     const handleContinue = async () => {
         // Chuyển đổi số tiền về dạng số nguyên
         const finalAmount = totalAmount - discountedAmount;
-
-        // Tạo object chứa thông tin cần thiết cho thanh toán
+        
         const paymentData = {
             userId: userId,
             name: customerInfo.name,
@@ -173,17 +233,11 @@ const Checkout = () => {
             note: notes,
             paymentStatus: "Chưa thanh toán",
             status: "Chờ xác nhận",
-            // items: cartItems.map((item) => ({
-            //     productId: item.productId,
-            //     quantity: item.quantity,
-            //     price: item.price,
-            // })),
             address:
                 shippingOption === "store"
                     ? storeAddress
                     : customerInfo.address,
         };
-        console.log(paymentData);
         if (paymentMethod === "MoMo") {
             try {
                 // Gọi API tạo thanh toán MOMO
@@ -241,9 +295,34 @@ const Checkout = () => {
                 });
 
                 if (orderResponse.ok) {
+                    const orderRes = await orderResponse.json();
+                    for (const item of cartItems) {
+                        const orderDetail = {
+                            orderId: orderRes.id,
+                            productId: item.productId,
+                            colorSizeId: item.colorSizeId,
+                            price: item.price,
+                            quantity: item.quantity,
+                        };
+    
+                        // Gọi API tạo chi tiết đơn hàng
+                        const orderDetailResponse = await fetch(`${API_URL}/api/OrderDetails`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(orderDetail),
+                        });
+    
+                        if (!orderDetailResponse.ok) {
+                            console.error("Lỗi khi tạo chi tiết đơn hàng:", await orderDetailResponse.json());
+                            throw new Error("Lỗi khi tạo chi tiết đơn hàng");
+                        }
+                        // Gọi API cập nhật số lượng colorSize
+                        updateStock(item.colorSizeId, item.quantity)
+                    }
                     // Xóa sản phẩm khỏi giỏ hàng
                     const ids = cartItems.map((item) => item.id);
-                    console.log("IDs to delete:", ids); 
                     const deleteResponse = await fetch(`${API_URL}/api/Carts/BySelectedItem/${userId}`, {
                         method: "DELETE",
                         headers: {
@@ -265,7 +344,7 @@ const Checkout = () => {
                         showProgress: true,
                         pauseOnHover: true,
                     });
-                    navigate("/payment-history");
+                    navigate("/my-orders");
                 } else {
                     throw new Error("Lỗi khi tạo đơn hàng");
                 }
@@ -280,6 +359,7 @@ const Checkout = () => {
                     pauseOnHover: true,
                 });
             }
+           
         }
     };
 

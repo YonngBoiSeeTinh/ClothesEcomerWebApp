@@ -125,7 +125,7 @@ Future<void> updateUser() async {
       request.fields['name'] = user['name'];
       request.fields['phone'] = user['phone'];
       request.fields['address'] = user['address'];
-      if(user['totalBuy'] < 1500000)
+      if(user['totalBuy'] <= 1500000)
         {request.fields['role'] = "4";} // thuong
       else if(user['totalBuy'] > 1500000)
         {request.fields['role'] = "5";}  //bac
