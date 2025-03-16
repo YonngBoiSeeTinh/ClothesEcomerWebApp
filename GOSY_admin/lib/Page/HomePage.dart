@@ -5,6 +5,7 @@ import 'CategoryManager.dart';
 import 'Dashboard.dart';
 import 'OrderManager.dart';
 import 'ProductManager.dart';
+import 'PromotionManager.dart';
 import 'UserManager.dart';
 
 class Homepage extends StatefulWidget {
@@ -33,6 +34,7 @@ class _HomepageState extends State<Homepage> {
     Center(child: OrderManager()),
     Center(child: UserManager()),
     Center(child: CategoryManager()),
+    Center(child: PromotionManager()),
   ];
   Widget _menuTitle(String title, IconData icon, int index){
     return Container(
@@ -80,11 +82,12 @@ class _HomepageState extends State<Homepage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 70), // Khoảng cách từ trên
-                      _menuTitle("Dashboard",Icons.dashboard,0),
-                      _menuTitle("Product Manager",Icons.shopping_cart,1),
-                      _menuTitle("Order Manager",Icons.shopping_bag,2),
-                      _menuTitle("User Manager",Icons.contact_page,3),
-                      _menuTitle("Categories Manager",Icons.category,4),
+                      _menuTitle("Trang chủ",Icons.dashboard,0),
+                      _menuTitle("Quản lý sản phẩm",Icons.shopping_cart,1),
+                      _menuTitle("Quản lý đơn hàng",Icons.shopping_bag,2),
+                      _menuTitle("Quản lý người dùng",Icons.contact_page,3),
+                      _menuTitle("Quản lý danh mục",Icons.category,4),
+                      _menuTitle("Quản lý khuyến mãi",Icons.money,5),
                     ],
                   )
                 : SizedBox.shrink(), // Nếu menu ẩn, không hiển thị gì

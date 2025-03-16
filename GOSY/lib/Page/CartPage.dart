@@ -268,14 +268,19 @@ class _CartpageState extends State<Cartpage> {
                                 )
                               ),
                             ),
-                            Text(
-                              '${colorSize?['color']} - Size ${colorSize['size']}'
-                              ,
-                            style:TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
-                                color: Color.fromARGB(255, 63, 63, 65),
-                              )
+                            SizedBox(
+                                width: 135,
+                              child: Text(
+                                '${colorSize?['color']} - Size ${colorSize['size']}'
+                                ,
+                                    maxLines: 1, 
+                                 overflow: TextOverflow.ellipsis, 
+                              style:TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  color: Color.fromARGB(255, 63, 63, 65),
+                                )
+                              ),
                             ),
 
                             Text(

@@ -11,26 +11,20 @@ const Shop = () => {
     const location = useLocation();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [brands, setBrands] = useState(["Apple", "Xiaomi", "Huawei"]);
     const [colors, setColors] = useState([]);
 
     const [colorSizes, setColorSizes] = useState([]);
     const [selectedColor, setSelectedColor] = useState("");
     // Temporary states for filter changes
-    const [tempSelectedBrands, setTempSelectedBrands] = useState([
-        location.state?.brand || "",
+    const [tempSelectedCategories, setTempSelectedBCategories] = useState([
+        location.state?.category || "",
     ]);
+    console.log('tempSelectedCategories',tempSelectedCategories);
     const [tempSelectedColors, setTempSelectedColors] = useState([]);
     const [tempPriceRange, setTempPriceRange] = useState([0, 20000000]);
 
-    const [selectedBrands, setSelectedBrands] = useState([
-        location.state?.brand || "",
-    ]);
-    const [selectedColors, setSelectedColors] = useState([]);
-    const [priceRange, setPriceRange] = useState([0, 20000000]);
-
     const [maxPrice, setMaxPrice] = useState(20000000);
-    const [isBrandOpen, setIsBrandOpen] = useState(false);
+    const [isCategoryOpen, setisCategoryOpen] = useState(false);
     const [isPriceOpen, setIsPriceOpen] = useState(false);
     const [isColorOpen, setIsColorOpen] = useState(false);
 
@@ -38,8 +32,18 @@ const Shop = () => {
     const productsPerPage = 20;
     let filtered = products;
     const navigate = useNavigate();
+    const [categoies, setCategories] = useState([]);
+
 
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/api/Categories`);
+                setCategories(response.data);
+            } catch (error) {
+                console.error("Lỗi khi tải categories:", error);
+            }
+        };
         const fetchAllProducts = async () => {
             try {
                 const response = await axios.get(`${API_URL}/api/Products`);
@@ -58,56 +62,38 @@ const Shop = () => {
                 console.error(error);
             }
         };
-
-        const fetchBrands = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:7192/api/Products"
-                );
-                setBrands(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        const fetchColors = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:7192/api/colors"
-                );
-                setColors(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchAllProducts();
-        // fetchBrands();
-        // fetchColors();
+        fetchCategories();
+        
     }, []);
+
     useEffect(() => {
-        if (tempSelectedBrands.length > 0) {
-            filtered = filtered.filter((item) =>
-                tempSelectedBrands.includes(item.brand)
-            );
-            // console.log("fliter: ",filtered);
+        if (location.state?.category) {
+            toggleCategoryFilter
+            setTempSelectedBCategories([location.state.category]);
+            applyFilters()
         }
-    }, [tempSelectedBrands]);
-    const toggleBrandFilter = () => {
-        setIsBrandOpen(!isBrandOpen);
+    }, [location.state]);
+    useEffect(() => {
+        if (tempSelectedCategories.length > 0) {
+            applyFilters()
+        }
+    }, [tempSelectedCategories, location.state]);
+    const toggleCategoryFilter = () => {
+        setisCategoryOpen(!isCategoryOpen);
         setIsPriceOpen(false);
         setIsColorOpen(false);
     };
 
     const togglePriceFilter = () => {
         setIsPriceOpen(!isPriceOpen);
-        setIsBrandOpen(false);
+        setisCategoryOpen(false);
         setIsColorOpen(false);
     };
 
     const toggleColorFilter = () => {
         setIsColorOpen(!isColorOpen);
-        setIsBrandOpen(false);
+        setisCategoryOpen(false);
         setIsPriceOpen(false);
     };
 
@@ -115,11 +101,11 @@ const Shop = () => {
         navigate(`${PathNames.PRODUCT_DETAILS}/${productId}`);
     };
 
-    const handleBrandSelection = (brand) => {
-        setTempSelectedBrands((prevSelectedBrands) => {
-            return prevSelectedBrands.includes(brand)
-                ? prevSelectedBrands.filter((b) => b !== brand)
-                : [...prevSelectedBrands, brand];
+    const handleCategoriesSelection = (category) => {
+        setTempSelectedBCategories((prevSelectedcategorys) => {
+            return prevSelectedcategorys.includes(category)
+                ? prevSelectedcategorys.filter((b) => b !== category)
+                : [...prevSelectedcategorys, category];
         });
     };
 
@@ -136,9 +122,10 @@ const Shop = () => {
     };
 
     const applyFilters = () => {
-        if (tempSelectedBrands.length > 0) {
+
+        if (tempSelectedCategories.length > 0) {
             filtered = filtered.filter((item) =>
-                tempSelectedBrands.includes(item.brand)
+                tempSelectedCategories.includes(item.categoryId)
             );
         }
 
@@ -158,13 +145,9 @@ const Shop = () => {
     };
 
     const resetFilters = () => {
-        setTempSelectedBrands([]);
+        setTempSelectedBCategories([]);
         setTempSelectedColors([]);
         setTempPriceRange([0, maxPrice]);
-
-        setSelectedBrands([]);
-        setSelectedColors([]);
-        setPriceRange([0, maxPrice]);
 
         setFilteredProducts(products);
     };
@@ -187,6 +170,7 @@ const Shop = () => {
                 const data = await response.json();
                 console.log("data color", data);
                 setColorSizes(data);
+                return data
             } else {
                 throw new Error("Failed to fetch product");
             }
@@ -195,20 +179,18 @@ const Shop = () => {
             // setError("Failed to load product data. Please try again.");
         }
     };
-    const handleBuyNow = (product) => {
-        const colors = fetchColorSize(product?.id);
-        console.log("color", colors);
-
-        if (colorSizes.length > 0) {
-            setSelectedColor(colorSizes[0]);
+    const handleBuyNow = async(product) => {
+        const colors = await fetchColorSize(product.id);
+        console.log('colorSizes',colors[0]);
+        if (colors.length > 0) {
             const productBuyNow = {
                 productId: product.id,
                 image: product.image,
                 name: product.name,
                 quantity: 1,
-                colorSizeId: selectedColor.id,
-                color: selectedColor.color,
-                size: selectedColor.size,
+                colorSizeId: colors[0].id,
+                color: colors[0].color,
+                size: colors[0].size,
                 price: product?.price,
             };
             // console.log('product buy now ',productBuyNow);
@@ -233,10 +215,10 @@ const Shop = () => {
                 <div className="mb-10 relative">
                     <div className="flex items-center">
                         <button
-                            onClick={toggleBrandFilter}
+                            onClick={toggleCategoryFilter}
                             className="bg-gray-100 text-black py-2 px-4 rounded-full"
                         >
-                            Thương hiệu
+                           Danh mục
                         </button>
                         <button
                             onClick={togglePriceFilter}
@@ -268,32 +250,32 @@ const Shop = () => {
                         </button>
                     </div>
 
-                    {/* Brand Filter Section */}
-                    {isBrandOpen && (
+                    {/* category Filter Section */}
+                    {isCategoryOpen && (
                         <div className="absolute z-10 mt-2 w-72 bg-white border border-gray-300 rounded-md shadow-lg p-4">
                             <h3 className="font-semibold mb-1">Thương hiệu</h3>
                             <ul>
-                                {brands.map((brand, index) => (
+                                {categoies.map((category, index) => (
                                     <li
                                         key={index}
                                         className="flex items-center"
                                     >
                                         <input
                                             type="checkbox"
-                                            checked={tempSelectedBrands.includes(
-                                                brand
+                                            checked={tempSelectedCategories.includes(
+                                                category.id
                                             )}
                                             onChange={() =>
-                                                handleBrandSelection(brand)
+                                                handleCategoriesSelection(category.id)
                                             }
                                             className="mr-2"
                                         />
                                         <label
                                             onClick={() =>
-                                                handleBrandSelection(brand)
+                                                handleCategoriesSelection(category.id)
                                             }
                                         >
-                                            {brand}
+                                            {category.name}
                                         </label>
                                     </li>
                                 ))}
@@ -384,7 +366,7 @@ const Shop = () => {
                         {currentProducts.map((item) => (
                             <div
                                 key={item.id}
-                                className="productcard-item group h-[21em] md:h-[23em] lg:h-[25.5em] rounded-2xl shadow p-4 cursor-pointer relative"
+                                className="card_item productcard-item group h-[21em] md:h-[23em] lg:h-[25.5em] rounded-2xl shadow p-4 cursor-pointer relative"
                             >
                                 <div
                                     onClick={() => handleProductClick(item.id)}
@@ -410,7 +392,7 @@ const Shop = () => {
                                             {item.name}
                                         </h2>
                                         <p className="text-gray-600">
-                                            {item.brand}
+                                            {item.category}
                                         </p>
                                         <p className="text-red-500 font-semibold">
                                             {item.price.toLocaleString()} đ

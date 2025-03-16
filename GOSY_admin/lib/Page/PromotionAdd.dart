@@ -9,16 +9,15 @@ import '../Widget/Alter.dart';
 import 'HomePage.dart';
 
 
-class CategoryUpdatePage extends StatefulWidget {
+class PromotionAddPage extends StatefulWidget {
 
-  final Map<String, dynamic> category;
-  const CategoryUpdatePage({super.key, required this.category});
+  const PromotionAddPage({super.key});
 
   @override
-  _CategoryUpdatePageState createState() => _CategoryUpdatePageState();
+  _CategoryAddPageState createState() => _CategoryAddPageState();
 }
 
-class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
+class _CategoryAddPageState extends State<PromotionAddPage> {
   final TextEditingController nameController =TextEditingController();
   final TextEditingController descriptionController =TextEditingController();
   File? imageFile;
@@ -26,18 +25,14 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.category?['name'] ?? '';
-    descriptionController.text = widget.category?['description'] ?? '';
   }
-  Future<void> updatecategory(File? imageFile) async {
-  var uri = Uri.parse('${ApiConfig.baseUrl}/api/Categories/${widget.category['id']}');
-  var request = http.MultipartRequest('PUT', uri);
+  Future<void> addcategory(File? imageFile) async {
+  var uri = Uri.parse('${ApiConfig.baseUrl}/api/Categories');
+  var request = http.MultipartRequest('POST', uri);
 
   // Thêm các trường văn bản
   request.fields['name'] = nameController.text;
   request.fields['description'] = descriptionController.text;
-  request.fields['createdAt'] = widget.category['createdAt'];
-
   // Thêm tệp hình ảnh nếu có
   if (imageFile != null) {
     var multipartFile = await http.MultipartFile.fromPath(
@@ -54,7 +49,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Alter(message: 'Cập nhật danh mục thành công!');
+        return Alter(message: 'Thêm mới danh mục thành công!');
       },
     ).then((_) {
       Navigator.pushReplacement(
@@ -66,7 +61,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
     });
     } else {
       Alter(message: 'Cập nhật sản phẩm thất bại, vui lòng thử lại!');
-      print('Failed to update category: ${response.statusCode}');
+      print('Failed to Add category: ${response.statusCode}');
       var responseBody = await response.stream.bytesToString();
       print('Response body: $responseBody');
     }
@@ -78,7 +73,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
       : Scaffold(
       backgroundColor: Color.fromARGB(255, 243, 243, 243),
       appBar: AppBar(
-        title: Text("Update category",style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold)),
+        title: Text("Add category",style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold)),
         backgroundColor: Color(0xFF4C53A5),
         iconTheme: IconThemeData(
           color: Colors.white,
@@ -104,7 +99,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
             right: 0,
             child: InkWell(
               onTap: () {
-                updatecategory(imageFile);
+                addcategory(imageFile);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -131,7 +126,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                             ),
                             child: Center(
                               child: Text(
-                                "Update",
+                                "Add",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -170,10 +165,6 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                         imageFile!,
                         height: 200,
 
-                      )
-                    :widget.category?['image'] != null ?Image.memory(
-                              base64Decode(widget.category?['image']),
-                              height: 200,
                       )
                      :Container(
                         height: 200,

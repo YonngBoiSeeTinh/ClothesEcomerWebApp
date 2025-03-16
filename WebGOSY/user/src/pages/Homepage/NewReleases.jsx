@@ -32,10 +32,27 @@ const NewReleases = () => {
             .slice(0, 4); // Lấy 4 sản phẩm đầu tiên
     };
     const NReleaseProducts = getProductsById();
-    console.log("NReleaseProducts: ",NReleaseProducts);
+    const fetchColorSize = async (productId) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/ColorSizes/ProductColorSize/${productId}`
+            );
 
-
+            if (response.ok) {
+                const data = await response.json();
+                console.log("data color", data);
+                return data
+            } else {
+                throw new Error("Failed to fetch product");
+            }
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            // setError("Failed to load product data. Please try again.");
+        }
+    };
     const handleAddtoCart = async (selectedProduct) => {
+        const colors = await fetchColorSize(selectedProduct.id);
+
         if (!userId) {
             notification.warning({
                 message: "Lưu ý!",
@@ -74,17 +91,16 @@ const NewReleases = () => {
 
         const cartItem = {
             productId: selectedProduct.id,
-            name: selectedProduct.name,
+            userId: userId,
             price: selectedProduct.price,
-            color: selectedProduct.color,
+            colorSizeId: colors[0]?.id,
             quantity: parseInt(quantity),
-            image: selectedProduct.image,
         };
 
         console.log("Sending cart item:", cartItem);
 
         try {
-            const response = await fetch(`${API_URL}/api/cart/${userId}/add`, {
+            const response = await fetch(`${API_URL}/api/Carts`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -140,16 +156,16 @@ const NewReleases = () => {
                 />
                 {/* Phần nội dung */}
                 <div className="mb-10">
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 place-items-center ">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center ">
                         {/* card selection */}
                         {NReleaseProducts.map((item) => (
                             <div
                                 key={item.id}
-                                className="w-[19rem] h-[28rem]  mx-2 my-2 bg-white border xl:scale-90 lg:scale-90 md:scale-75 sm:scale-50 border-gray-200 rounded-2xl shadow dark:bg-gray-800 dark:border-gray-700"
+                                className="card_item w-[12rem] h-[20rem]  md:w-[19rem] md:h-[28rem]  mx-2 my-2 bg-white border xl:scale-90 lg:scale-90 md:scale-75 sm:scale-50 border-gray-200 rounded-2xl shadow dark:bg-gray-800 dark:border-gray-700"
                             >
                                 {item.image ? (
                                     <img
-                                        className="p-8 rounded-t-lg cursor-pointer h-[20rem] w-full"
+                                        className="p-8 rounded-t-lg cursor-pointer h-[13rem] sm:h-[20rem] w-full"
                                         src={`data:image/jpeg;base64,${item.image}`}
                                         alt="product image"
                                         onClick={() =>
@@ -169,14 +185,15 @@ const NewReleases = () => {
                                             {item.name}
                                         </h5>
                                     </Link>
-                                    <div className="flex items-center justify-between mt-5">
+                                    <div className="sm:flex items-center justify-between mt-2  sm:mt-5">
                                         <span className="text-xl font-bold text-gray-900 dark:text-white">
                                             {formatCurrency(item.price)}
                                         </span>
 
                                         <AddtoCartBtn
                                             onClick={() => handleAddtoCart(item)}
-                                            className="text-white bg-blue-200 focus:outline-none font-medium rounded-xl hover:scale-105 ease transition-transform text-sm px-5 py-2.5 text-center"
+                                            className="text-white bg-blue-200 focus:outline-none font-medium rounded-xl hover:scale-105 ease transition-transform 
+                                            text-sm px-5 py-2.5 text-center"
                                             text={"Thêm vào giỏ"}
                                         />
                                     </div>
@@ -193,7 +210,7 @@ const NewReleases = () => {
 export default NewReleases;
 
 
-//FROM CLAUDE
+
 
 // import axios from "axios";
 // import { useEffect, useState } from "react";

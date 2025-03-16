@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../AppConfig.dart';
 import '../Widget/Alter.dart';
-import 'AddProduct.dart';
-import 'EditProduct.dart';
+import 'ProductAdd.dart';
+import 'ProductEdit.dart';
 class ProductManager extends StatefulWidget {
   const ProductManager({super.key});
 
@@ -95,6 +95,10 @@ class _ProductManagerState extends State<ProductManager> {
     );
     return category != null ? category['name'] : 'Unknown Category';
   }
+  String formatCurrency(double amount) {
+    final pattern = RegExp(r'(\d)(?=(\d{3})+(?!\d))');
+    return amount.toStringAsFixed(0).replaceAllMapped(pattern, (match) => '${match[1]}.') + ' ₫';
+  }
   void _showProductDetailDialog(BuildContext context, dynamic product) {
     showDialog(
       context: context,
@@ -150,7 +154,7 @@ class _ProductManagerState extends State<ProductManager> {
                   // Price
                    SizedBox(height: 8),
                   Text(
-                    "Price: ${product['price']} VND",
+                    "Price: ${formatCurrency(product['price'])}",
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.black,
@@ -231,7 +235,7 @@ class _ProductManagerState extends State<ProductManager> {
         appBar: AppBar(
           backgroundColor: Colors.white,
         title: Text(
-          "Product Manager",
+          "Quản lý sản phẩm",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color(0xFF4C53A5)),
         ),
       ),
@@ -249,7 +253,7 @@ class _ProductManagerState extends State<ProductManager> {
 
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
@@ -268,23 +272,25 @@ class _ProductManagerState extends State<ProductManager> {
                       bytesImage.isNotEmpty 
                           ? Image.memory(
                               bytesImage,
-                              width: 80,
-                              height: 80,
+                              width: 70,
+                              height: 70,
                               fit: BoxFit.cover,
                             )
                           : Container(
-                              width: 80,
-                              height: 80,
+                              width: 70,
+                              height: 70,
                               color: Colors.grey[200],
                               child: Icon(Icons.image, color: Colors.grey),
                             ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               product['name'],
+                               maxLines: 1, 
+                               overflow: TextOverflow.ellipsis, 
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -293,7 +299,7 @@ class _ProductManagerState extends State<ProductManager> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              '${product['price']} VND',
+                              '${formatCurrency(product['price'])}',
                               style: TextStyle(fontSize: 16, color: Color(0xFF4C53A5)),
                             ),
                             SizedBox(height: 4),
@@ -301,42 +307,45 @@ class _ProductManagerState extends State<ProductManager> {
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              _showProductDetailDialog(context, product);
-                            },
-                            icon: Icon(Icons.remove_red_eye),
-                            color: Color.fromARGB(255, 68, 128, 202),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductUpdatePage(product: product,), // Truyền id vào ProductUpdatePage
-                                  ),
+                      Container(
+                        width: 144,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                _showProductDetailDialog(context, product);
+                              },
+                              icon: Icon(Icons.remove_red_eye),
+                              color: Color.fromARGB(255, 68, 128, 202),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProductUpdatePage(product: product,), // Truyền id vào ProductUpdatePage
+                                    ),
+                                  );
+                               },
+                              icon: Icon(Icons.edit),
+                              color: Colors.orange,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showConfirmDialog(
+                                  context: context,
+                                  title: "Xác nhận",
+                                  content: "Bạn có chắc muốn xóa sản phẩm này không?",
+                                  onConfirm: () {
+                                    deleteProduct(product['id']);
+                                  },
                                 );
-                             },
-                            icon: Icon(Icons.edit),
-                            color: Colors.orange,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              showConfirmDialog(
-                                context: context,
-                                title: "Xác nhận",
-                                content: "Bạn có chắc muốn xóa sản phẩm này không?",
-                                onConfirm: () {
-                                  deleteProduct(product['id']);
-                                },
-                              );
-                            },
-                            icon: Icon(Icons.delete),
-                            color: Colors.red,
-                          ),
-                        ],
+                              },
+                              icon: Icon(Icons.delete),
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

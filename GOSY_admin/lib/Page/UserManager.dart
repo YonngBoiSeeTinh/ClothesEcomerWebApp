@@ -118,7 +118,7 @@ class _UserManagerState extends State<UserManager> {
       appBar: AppBar(
         backgroundColor:Colors.white,
         title: Text(
-          "User Manager",
+          "Quản lý người dùng",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

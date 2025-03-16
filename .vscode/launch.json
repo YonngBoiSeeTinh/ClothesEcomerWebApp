@@ -2,6 +2,7 @@
  
     "version": "0.2.0",
     "configurations": [
+        
     
         {
             "name": "GOSY",
@@ -17,21 +18,21 @@
             "flutterMode": "profile"
         },
         {
-            "name": "clothes_shop_admin (release mode)",
-            "cwd": "clothes_shop_admin",
+            "name": "GOSY_admin (release mode)",
+            "cwd": "GOSY_admin",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
         },
         {
-            "name": "clothes_shop_admin",
-            "cwd": "clothes_shop_admin",
+            "name": "GOSY_admin",
+            "cwd": "GOSY_admin",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "clothes_shop_admin (profile mode)",
-            "cwd": "clothes_shop_admin",
+            "name": "GOSY_admin (profile mode)",
+            "cwd": "GOSY_admin",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"

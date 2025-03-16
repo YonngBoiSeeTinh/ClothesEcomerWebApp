@@ -102,7 +102,9 @@ const Banner = ({ data }) => {
                             data-aos-anchor-placement="top-bottom"
                         >
                             <button
-                                className={`bg-white py-2 px-4 rounded-full text-indigo-500`}
+                                className={`card_item bg-white py-2 px-4 rounded-full 
+                                            text-indigo-500 font-semibold w-60
+                                            border-2 border-indigo-500`}
                                 onClick={() => handleButtonClick()}
                             >
                                 Mua Ngay

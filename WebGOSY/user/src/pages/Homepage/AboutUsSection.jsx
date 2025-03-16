@@ -15,10 +15,10 @@ const AboutUsSection = () => {
                     data-aos-anchor-placement="center-bottom"
                 >
                     <div className="max-w-[23rem]">
-                        <h1 className="lg:text-5xl md:text-5xl sm:text-5xl font-bold mb-4 text-indigo-400"    style={{textShadow:"-2px 4px 18px rgb(126, 122, 141)" }}>
+                        <h1 className="lg:text-5xl md:text-5xl sm:text-5xl font-bold mb-4 text-gray-200"    style={{textShadow:"0 4px 5px rgb(87, 68, 154)" }}>
                             Đây là GOSY
                         </h1>
-                        <p className="text-lg mb-4 tracking-tight">
+                        <p className="text-lg mb-4 tracking-tight text-gray-400">
                             {`Khám phá và định hình phong cách cá nhân của bạn cùng những item tuyệt vời của chúng tôi nào!`}
                         </p>
                     </div>
@@ -42,7 +42,7 @@ const AboutUsSection = () => {
                     <img
                         src={AboutUsImg}
                         alt="Person holding a Fairphone with a message 'Change is in your hands'"
-                        className="rounded-3xl shadow-2xl h-[45rem] "
+                        className="rounded-3xl shadow-2xl h-[25rem] sm:h-[45rem] "
                     />
                 </div>
             </div>

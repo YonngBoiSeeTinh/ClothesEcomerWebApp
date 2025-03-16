@@ -441,9 +441,9 @@ const ProductDetails = () => {
                                         {availableSizes.map((size) => (
                                             <div
                                                 key={size.id}
-                                                className={`p-2 h-9 border rounded cursor-pointer  w-[30px] flex justify-center ${
+                                                className={`p-2 h-9 border rounded cursor-pointer  min-w-[30px] flex justify-center ${
                                                     selectedColor?.id === size.id
-                                                        ? "bg-indigo-300 text-white border-indigo-600  w-[34px]"
+                                                        ? "bg-indigo-300 text-white border-indigo-600   min-w-[30px]"
                                                         : "hover:bg-indigo-300 hover:text-white"
                                                 }`}
                                                 onClick={() => handleSizeClick(size.id)}

@@ -77,6 +77,7 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
   request.fields['createdAt'] = widget.product?['createdAt'] ?? '';
   request.fields['brand'] = widget.product?['brand'] ?? '';
   request.fields['price'] = priceController.text;
+  request.fields['sold'] =widget.product?['sold'] ?? '';
   request.fields['description'] = descriptionController.text;
   request.fields['categoryId'] = selectedCategoryId ?? '';
 
@@ -187,6 +188,8 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
           "quantity": colorSize["quantity"],
           "productId": widget.product?['id'], 
           "code": colorSize["code"],
+          "createdAt": colorSize["createdAt"],
+          "price":0
         }),
       );
 

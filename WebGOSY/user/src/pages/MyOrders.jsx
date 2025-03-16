@@ -12,7 +12,9 @@ const MyOrders = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [ordersPerPage] = useState(5); // Display 5 orders per page
     const [selectedOrder, setSelectedOrder] = useState(null); // Selected order for details
-    const [productOrder, setProductOrder] = useState([])
+    const [orderDetails, setOrderDetails] = useState([]);
+    const [colorSizes, setColorsizes] = useState([]);
+    const [selectedOrderDetails, setSelectedOrderDetails] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
     const [cancelModalVisible, setCancelModalVisible] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
@@ -43,32 +45,61 @@ const MyOrders = () => {
             setLoading(false);
         }
     };
-  
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/api/products`);
-                if (response.status === 200) {
-                    const data = response.data;
-                    //console.log("Fetched products:", data); // Log the products
-                    setProducts(data); // Set the products state
-                } else {
-                    console.error(
-                        `Failed to fetch products: ${response.status} ${response.statusText}`
-                    );
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    const fetchOrderDetail = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/OrderDetails`);
+            if (response.status == 200) {
+                const data = response.data;
+                setOrderDetails(data);
+            } else {
+                console.error("Failed to fetch orders");
             }
-        };
-
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+    const fetchColorSizes = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/ColorSizes`);
+            if (response.status === 200) {
+                const data = response.data;
+                setColorsizes(data);
+            } else {
+                console.error(
+                    `Failed to fetch products: ${response.status} ${response.statusText}`
+                );
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    };
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/Products`);
+            if (response.status === 200) {
+                const data = response.data;
+                //console.log("Fetched products:", data); // Log the products
+                setProducts(data); // Set the products state
+            } else {
+                console.error(
+                    `Failed to fetch products: ${response.status} ${response.statusText}`
+                );
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    };
+    useEffect(() => {
+        fetchOrderDetail();
+        fetchColorSizes();
         fetchProducts();
-    }, [userId,refreshTrigger]);
+    }, []);
+    
     useEffect(()=>{
         if (userId) {
             fetchOrders(userId)
         }
-    },[userId])
+    },[userId, refreshTrigger])
 
     // Get current orders for the current page
     const indexOfLastOrder = currentPage * ordersPerPage;
@@ -79,16 +110,23 @@ const MyOrders = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // Show modal with order details
-    const showOrderDetails = (order) => {
+    const handleViewDetails = (order) => {
         setSelectedOrder(order);
+        setSelectedOrderDetails(
+            orderDetails.filter((od) => od.orderId === order.id)
+        );
+        console.log(selectedOrder);
+        showOrderDetails(selectedOrder)
+    };
+    const showOrderDetails = (order) => {
         setIsModalVisible(true);
-        
     };
 
     // Close modal
     const handleCancel = () => {
         setIsModalVisible(false);
-        setSelectedOrder(null); // Clear selected order when modal is closed
+        setSelectedOrder(null);
+        setSelectedOrderDetails([]) // Clear selected order when modal is closed
     };
 
     // Thêm hàm format tiền tệ Việt Nam
@@ -180,12 +218,12 @@ const MyOrders = () => {
         }
 
         try {
-            const response = await axios.post(
-                `${API_URL}/api/orders/${cancellingOrder.id}/cancel`,
-                { cancellationReason: cancelReason }
+            const response = await axios.put(
+                `${API_URL}/api/Orders/${cancellingOrder.id}`,
+                {...cancellingOrder, cancellationReason: cancelReason,status:"Đã hủy" }
             );
-
-            if (response.status === 200) {
+            console.log(response);
+            if (response.status === 204) {
                 Modal.success({
                     title: "Thành công",
                     content: "Đơn hàng đã được hủy thành công",
@@ -243,7 +281,7 @@ const MyOrders = () => {
                                                 key={order._id}
                                                 className="bg-white border border-gray-200 p-6 rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer"
                                                 onClick={() =>
-                                                    showOrderDetails(order)
+                                                    handleViewDetails(order)
                                                 }
                                             >
                                                 <div className="flex justify-between items-start">
@@ -413,14 +451,14 @@ const MyOrders = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {selectedOrder.items.map(
+                                                    {selectedOrderDetails.map(
                                                         (item) => {
                                                             const product =
                                                                 products.find(
                                                                     (prod) =>
-                                                                        prod.id ===
+                                                                        prod.id ==
                                                                         item.productId
-                                                                ); // Get product details using productId
+                                                                ); 
                                                             return (
                                                                 <tr
                                                                     key={

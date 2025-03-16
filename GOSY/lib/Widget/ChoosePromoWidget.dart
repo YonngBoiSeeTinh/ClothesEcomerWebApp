@@ -121,7 +121,7 @@ class _ChoosePromoWidetState extends State<ChoosePromoWidet> {
                     itemCount: promotions.length,
                     itemBuilder: (context, index){
                       final promo = promotions[index];
-                      bool isAvailbe = (widget.totalPrice >= promo['minPrice']);
+                      bool isAvailbe = (widget.totalPrice >= promo?['minPrice']);
                       return Container(
                         margin:EdgeInsets.symmetric( vertical: 5) ,
                         padding: EdgeInsets.only(bottom: 5, top: 5, left: 10),

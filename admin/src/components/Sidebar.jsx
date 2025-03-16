@@ -48,7 +48,7 @@ const Sidebar = ({ selectedContent, onNavigate, onLogout }) => {
                 >
                     <img
                         className="menu-icon"
-                        src="src/img/icon/smartphone.png"
+                        src="src/img/icon/product.png"
                         alt="Quản lý sản phẩm"
                     />
                     <span>Quản lý sản phẩm</span>
@@ -63,7 +63,7 @@ const Sidebar = ({ selectedContent, onNavigate, onLogout }) => {
                 >
                     <img
                         className="menu-icon"
-                        src="src/img/icon/smartphone.png"
+                        src="src/img/icon/category.png"
                         alt="Quản lý danh mục"
                     />
                     <span>Quản lý danh mục </span>
@@ -78,7 +78,7 @@ const Sidebar = ({ selectedContent, onNavigate, onLogout }) => {
                 >
                     <img
                         className="menu-icon"
-                        src="src/img/icon/checklist.png"
+                        src="src/img/icon/order.png"
                         alt="Quản lý đơn hàng"
                     />
                     <span>Quản lý đơn hàng</span>
@@ -134,7 +134,7 @@ const Sidebar = ({ selectedContent, onNavigate, onLogout }) => {
                 >
                     <img
                         className="menu-icon"
-                        src="src/img/icon/user.png"
+                        src="src/img/icon/storage.png"
                         alt="Quản lý phiếu nhập kho"
                     />
                     <span>Quản lý phiếu</span>

@@ -73,3 +73,23 @@ input:-webkit-autofill {
     box-shadow: 0 0 0px 1000px white inset !important;
     background-color: white !important;
 }
+.card_item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card_item:hover {
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+    border:1px solid rgb(174, 152, 213);
+    transform: translateY(-4px);
+  }
+.category_item{
+    transition: transform 0.3s ease, box-shadow,background-color,color 0.3s ease;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    color: rgb(122, 122, 122);
+}
+.category_item:hover{
+    box-shadow: 0px 0px 15px rgba(185, 5, 225, 0.2);
+    transform: translateY(-4px) ;
+    border:1px solid rgb(174, 152, 213);
+    color:  rgb(174, 152, 213);
+    
+}

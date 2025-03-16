@@ -3,6 +3,7 @@ import { API_URL } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { notification } from "antd";
 import PathNames from "../PathNames.js";
+import {  useSelector } from "react-redux";
 import axios from "axios";
 const Checkout = () => {
     const location = useLocation();
@@ -20,10 +21,11 @@ const Checkout = () => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [notes, setNotes] = useState(""); // Lưu trữ ghi chú từ người dùng
     const [showDiscountDialog, setShowDiscountDialog] = useState(false);
-    const [discountCodes, setDiscountCodes] = useState([]);
+    const [discounts, setDiscounts] = useState([]);
     const [selectedDiscount, setSelectedDiscount] = useState(null);
     const [discountedAmount, setDiscountedAmount] = useState(0);
 
+    const user = useSelector((state) => state.user);
     const userId = localStorage.getItem("userId");
 
     useEffect(() => {
@@ -118,7 +120,7 @@ const Checkout = () => {
 
     // Thêm useEffect để fetch mã giảm giá
     useEffect(() => {
-        const fetchDiscountCodes = async () => {
+        const fetchDiscounts = async () => {
             try {
                 const response = await fetch(`${API_URL}/api/Promotions`);
                 if (!response.ok) {
@@ -132,14 +134,44 @@ const Checkout = () => {
                 const enableDiscount = sortedCodes.filter(
                     (discount) => new Date(discount.endAt).getTime() > Date.now()
                 );
+                let memberDiscount;
+                if (user?.role === 5) {
+                    memberDiscount = {
+                        name: "Ưu đãi khách hàng bạc",
+                        value: 7,
+                        minPrice: 2000000,
+                        maxValue: 2500000,
+                        code: "MEMBERVIP",
+                    };
+                } else if (user?.role === 6) {
+                    memberDiscount = {
+                        name: "Ưu đãi khách hàng vàng",
+                        value: 10,
+                        minPrice: 2000000,
+                        maxValue: 3500000,
+                        code: "MEMBERVIP",
+                    };
+                } else if (user?.role === 7) {
+                    memberDiscount = {
+                        name: "Ưu đãi khách hàng kim cương",
+                        value: 10,
+                        minPrice: 2000000,
+                        maxValue: 4500000,
+                        code: "MEMBERVIP",
+                    };
+                }
+    
+                // Cập nhật danh sách mã giảm giá
+                const updatedDiscounts = memberDiscount
+                    ? [...enableDiscount, memberDiscount]
+                    : enableDiscount;
+                setDiscounts(updatedDiscounts);
                 
-                // Cập nhật lại danh sách mã giảm giá
-                setDiscountCodes(enableDiscount);
             } catch (error) {
                 console.error("Error fetching discount codes:", error);
             }
         };
-        fetchDiscountCodes();
+        fetchDiscounts();
     }, []);
 
     // Handler khi chọn mã giảm giá
@@ -220,13 +252,47 @@ const Checkout = () => {
             }
         }
     };
+    const updateSold = async (productId, quantity) => {
+        const product = productItems[productId];
+        try {
+              const formData = new FormData();
+        product.sold = product.sold + quantity
+        Object.keys(product).forEach((key) => {
+            formData.append(key, product[key]);
+        });
+        formData.append("createdAt", product.createdAt);
+    
+        console.log("📝 FormData nội dung:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        const response = await fetch(
+            `${API_URL}/api/Products/${productId}`,
+            {
+                method: "PUT",
+                body: formData,
+            }
+        )
+        console.log(response);
+        if (response.status === 204) {
+            
+        }
+        } catch (error) {
+            Modal.error({
+                title: "Lỗi",
+                content:
+                    error.response?.data?.message || "Không thể update product",
+            });
+        } 
+    };
+
     const handleContinue = async () => {
         // Chuyển đổi số tiền về dạng số nguyên
         const finalAmount = totalAmount - discountedAmount;
         
         const paymentData = {
             userId: userId,
-            name: customerInfo.name,
+            name: customerInfo?.name,
             totalPrice: finalAmount,
             paymentMethod: paymentMethod,
             phone: customerInfo.phone,
@@ -319,7 +385,9 @@ const Checkout = () => {
                             throw new Error("Lỗi khi tạo chi tiết đơn hàng");
                         }
                         // Gọi API cập nhật số lượng colorSize
-                        updateStock(item.colorSizeId, item.quantity)
+                        await updateSold(item.productId, item.quantity)
+                        await updateStock(item.colorSizeId, item.quantity)
+                    
                     }
                     // Xóa sản phẩm khỏi giỏ hàng
                     const ids = cartItems.map((item) => item.id);
@@ -600,7 +668,7 @@ const Checkout = () => {
             {/* Dialog mã giảm giá */}
             {showDiscountDialog && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-h-[75vh] overflow-y-auto">
+                    <div className="bg-white rounded-lg p-6 w-96 max-h-[75vh] overflow-y-auto min-w-[250px] w-[40%]">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-semibold">
                                 Chọn mã giảm giá
@@ -612,8 +680,8 @@ const Checkout = () => {
                                 ✕
                             </button>
                         </div>
-                        <div className="space-y-4">
-                            {discountCodes.map((discount) => {
+                        <div className="space-y-4 ">
+                            {discounts.map((discount) => {
                                 // Kiểm tra điều kiện áp dụng mã giảm giá
                                 const isApplicable =
                                     totalAmount >= discount.minPrice;

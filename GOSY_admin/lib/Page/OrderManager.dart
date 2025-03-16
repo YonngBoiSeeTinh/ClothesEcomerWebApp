@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../AppConfig.dart';
 import '../Widget/Alter.dart';
 import '../Widget/OrderDetailWidget.dart';
-import 'EditOrder.dart';
+import 'OrderEdit.dart';
 
 
 class OrderManager extends StatefulWidget {
@@ -49,7 +49,7 @@ class _OrderManagerState extends State<OrderManager> {
       print('Error fetching products: $e');
     }
   }
-   Future<void> fetchOrder() async {
+  Future<void> fetchOrder() async {
     setState(() {
       isLoading = true;
     });
@@ -152,7 +152,7 @@ class _OrderManagerState extends State<OrderManager> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          "Order Manager",
+          "Quản lý đơn hàng",
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,

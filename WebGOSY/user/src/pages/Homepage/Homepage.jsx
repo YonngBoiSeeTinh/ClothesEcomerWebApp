@@ -5,8 +5,8 @@ import bannerImg from "../../assets/fakeAssets/gcjacket.png";
 import AboutUsSection from "./AboutUsSection";
 import Banner from "./Banner";
 import Blogs from "./Blogs";
-import Featured from "./Featured";
-import Featured2 from "./Featured2";
+import Categories from "./Category";
+
 import Hero from "./Hero";
 import NewReleases from "./NewReleases";
 import Partners from "./Partners";
@@ -51,7 +51,7 @@ const Homepage = () => {
     return (
         <main className="bg-white dark:bg-gray-900 dark:text-white duration-200 overflow-hidden">
             <Hero />
-            <Featured />
+            <Categories />
             <Services />
             <Banner data={BannerData} />
             <AboutUsSection />

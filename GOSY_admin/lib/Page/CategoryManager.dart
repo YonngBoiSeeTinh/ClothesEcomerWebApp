@@ -6,10 +6,9 @@ import 'package:http/http.dart' as http;
 
 import '../AppConfig.dart';
 import '../Widget/Alter.dart';
-import 'AddCategory.dart';
-import 'AddProduct.dart';
-import 'EditCategory.dart';
-import 'EditProduct.dart';
+import 'CategoryAdd.dart';
+import 'CategoryEdit.dart';
+import 'ProductEdit.dart';
 class CategoryManager extends StatefulWidget {
   const CategoryManager({super.key});
 
@@ -103,7 +102,7 @@ class _CategoryManagerState extends State<CategoryManager> {
             borderRadius: BorderRadius.circular(8),
           ),
           content: SizedBox(
-             width: MediaQuery.of(context).size.width * 0.7, 
+            width: MediaQuery.of(context).size.width * 0.7, 
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +202,7 @@ class _CategoryManagerState extends State<CategoryManager> {
         appBar: AppBar(
           backgroundColor: Colors.white,
         title: Text(
-          "Cateogries Manager",
+          "Quản lý danh mục",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color(0xFF4C53A5)),
         ),
       ),
@@ -258,6 +257,8 @@ class _CategoryManagerState extends State<CategoryManager> {
                             SizedBox(height: 4),
                             Text(
                               '${category['description']}',
+                               maxLines: 2, 
+                              overflow: TextOverflow.ellipsis, 
                               style: TextStyle(fontSize: 15, color: Color(0xFF4C53A5)),
                             ),
                             SizedBox(height: 4),

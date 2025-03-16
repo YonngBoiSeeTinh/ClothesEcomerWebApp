@@ -121,7 +121,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           'price': cartItem['price'],
           'productId': cartItem['productId']
         };
-
         try {
           final detailResponse = await http.post(
             Uri.parse('${ApiConfig.baseUrl}/api/OrderDetails'),
@@ -132,15 +131,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (detailResponse.statusCode != 200 && detailResponse.statusCode != 201) {
             print('Failed to add order detail: ${detailResponse.statusCode}');
           }
+          if(detailResponse.statusCode == 201){
+            updateProductSold(orderDetail['productId'], orderDetail['quantity']);
+            updateColorSizes(orderDetail['colorSizeId'], orderDetail['quantity']);
+           
+          }
         } catch (e) {
           print('Error adding order detail: $e');
         }
       }
-        ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Đơn hàng đã được tạo thành công, vui lòng đợi')),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đơn hàng đã được tạo thành công, vui lòng đợi')),
+      );
     
-       Navigator.pushReplacement(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => AccountWidget()),
       );
@@ -151,6 +155,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   } catch (e) {
     print('Error adding order: $e');
   }
+     
 }
  
  Future<bool> deleteCart(List<int> ids,int id) async {
@@ -177,7 +182,76 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return false;
   }
 }
-double originPrice = 0;
+ double originPrice = 0;
+
+dynamic getColorSize (int id){
+    return colorSizes.firstWhere((item) => item['id'] == id);
+}
+Future<void> updateColorSizes(int id, int quantity)async {
+  dynamic colorSize= getColorSize(id);
+    try {
+    
+      final response = await http.put(
+        Uri.parse('${ApiConfig.baseUrl}/api/ColorSizes/${id}'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "id": colorSize["id"].toString(),
+          "color": colorSize["color"],
+          "size": colorSize["size"],
+          "quantity":( colorSize["quantity"] - quantity).toString(),
+          "productId":colorSize['productId'].toString(), 
+          "code": colorSize["code"],
+          "createdAt": colorSize["createdAt"],
+          "price":0
+        }),
+      );
+
+      if (response.statusCode == 204) {
+        print('Successfully updated color size: ${response.body}');
+      } else {
+        print('Failed to update color size: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error updating color size: $e');
+    }
+  }
+
+dynamic getProduct (int id){
+    return products.firstWhere((item) => item['id'] == id);
+}
+Future<void> updateProductSold(int id, int quantity)async {
+  dynamic product= getProduct(id);
+   var uri = Uri.parse('${ApiConfig.baseUrl}/api/Products/${id}');
+   var request = http.MultipartRequest('PUT', uri);
+
+    // Thêm các trường văn bản
+    request.fields['name'] = product?['name'];
+    request.fields['promo'] = product['promo'].toString();
+    request.fields['startRate'] =product['startRate'].toString() ;
+    request.fields['unit'] = product['unit'].toString();
+    request.fields['createdAt'] = product?['createdAt'] ?? '';
+    request.fields['brand'] = product?['brand'] ?? '';
+    request.fields['price'] = product['price'].toString();
+    request.fields['description'] = product['description'];
+    request.fields['categoryId'] = product['categoryId'].toString();
+    request.fields['sold'] = (product?['sold'] + quantity).toString();
+
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+      print('Response body: $responseBody');
+    if (response.statusCode == 204) {
+      print('update product successfully');
+    } 
+    else {
+      print('Failed to update product: ${response.statusCode}');
+      var responseBody = await response.stream.bytesToString();
+      print('Response body: $responseBody');
+    }
+}
+
 void setPromotion(dynamic promo) {
   setState(() {
     if (promotion == null ) {

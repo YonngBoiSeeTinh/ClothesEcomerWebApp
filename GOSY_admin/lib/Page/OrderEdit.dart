@@ -39,7 +39,7 @@ class _OrderUpdateWidgetState extends State<OrderUpdateWidget> {
   }
 
   String? selectedStatus;
-  final List<String> statuses = ["Chờ xác nhận", "Đã xác nhận", "Đang giao", "Đã giao"];
+  final List<String> statuses = ["Chờ xác nhận", "Đã xác nhận", "Đã giao hàng","Đang giao", "Đã giao"];
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ Future<void> updateOrder() async {
     );
 
     if (response.statusCode == 204) {
-      if (selectedStatus == "Đã xác nhận") {
+      if (selectedStatus == "Đã giao hàng") {
         await updateUser(); 
       }
       showDialog(
@@ -129,7 +129,7 @@ Future<void> updateUser() async {
         {request.fields['role'] = "4";} // thuong
       else if(user['totalBuy'] > 1500000)
         {request.fields['role'] = "5";}  //bac
-      else if(user['totalBuy'] > 35000000)
+      else if(user['totalBuy'] > 3500000)
        { request.fields['role'] = "6";} //vang
       else if(user['totalBuy'] > 7000000)
        { request.fields['role'] = "7";} //kim cuong
