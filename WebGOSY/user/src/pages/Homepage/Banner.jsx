@@ -11,7 +11,7 @@ const Banner = ({ data }) => {
         <div className="min-h-[550px] flex justify-center items-center py-12">
             <div className="container">
                 <div
-                    className={`grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-white rounded-3xl ${data.bgColor}`}
+                    className={`grid grid-cols-1 lg:grid-cols-3 gap-6 justify-center items-center text-white rounded-3xl ${data.bgColor}`}
                 >
                     {/* first col */}
                     <div className="p-6 sm:p-8">
@@ -20,7 +20,7 @@ const Banner = ({ data }) => {
                             data-aos-duration="500"
                             data-aos-once={false}
                             data-aos-anchor-placement="bottom-bottom"
-                            className="font-bold uppercase 2xl:text-4xl xl:text-6xl lg:text-5xl md:text-5xl sm:"
+                            className="font-bold uppercase 2xl:text-4xl xl:text-6xl lg:text-5xl md:text-5xl text-2xl"
                             style={{textShadow:"-2px 5px 8px rgb(85, 72, 141)" }}
                         >
                             {data.title}
@@ -31,7 +31,7 @@ const Banner = ({ data }) => {
                             data-aos-delay="250"
                             data-aos-once={false}
                             data-aos-anchor-placement="center-bottom"
-                            className="text-sm mt-8"
+                            className="text-sm mt-8  hidden md:block"
                         >
                             {data.date}
                         </p>
@@ -53,9 +53,9 @@ const Banner = ({ data }) => {
                     </div>
 
                     {/* third col */}
-                    <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
+                    <div className="flex flex-col justify-center gap-4 p-6 sm:p-8 ">
                         <p
-                            className="text-xl font-bold"
+                            className="text-xl font-bold "
                             data-aos="fade-up"
                             data-aos-duration="500"
                             data-aos-once={false}
@@ -65,7 +65,7 @@ const Banner = ({ data }) => {
                             {data.title2}
                         </p>
                         <p
-                            className="2xl:text-xl xl:text-lg font-bold"
+                            className="2xl:text-xl xl:text-lg font-bold  hidden lg:block"
                             data-aos="fade-up"
                             data-aos-duration="500"
                             data-aos-once={false}
@@ -80,7 +80,7 @@ const Banner = ({ data }) => {
                             data-aos-duration="500"
                             data-aos-once={false}
                             data-aos-anchor-placement="bottom-bottom"
-                            className="font-bold 2xl:text-6xl xl:text-5xl lg:text-4xl text-5xl"
+                            className="font-bold 2xl:text-6xl xl:text-5xl lg:text-4xl text-5xl  hidden lg:block "
                         >
                             {data.discount}
                         </p>
@@ -103,7 +103,7 @@ const Banner = ({ data }) => {
                         >
                             <button
                                 className={`card_item bg-white py-2 px-4 rounded-full 
-                                            text-indigo-500 font-semibold w-60
+                                            text-indigo-500 font-semibold w-60 md:w-37 lg:w-60 
                                             border-2 border-indigo-500`}
                                 onClick={() => handleButtonClick()}
                             >

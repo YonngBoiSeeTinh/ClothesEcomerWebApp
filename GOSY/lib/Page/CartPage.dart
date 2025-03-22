@@ -12,12 +12,13 @@ import 'package:provider/provider.dart';
 
 
 class Cartpage extends StatefulWidget {
-  const Cartpage({super.key});
+  List<dynamic> products = [];
+  Cartpage({super.key, required this.products} );
  @override
   _CartpageState createState() => _CartpageState();
 }
 class _CartpageState extends State<Cartpage> {
-  List<dynamic> products = [];
+  
   List<dynamic> carts = [];
   List<dynamic> colorSizes = [];
   bool isLoading = false;
@@ -42,7 +43,6 @@ class _CartpageState extends State<Cartpage> {
     try {
       await Future.wait([
         fetchCarts(),
-        fetchProducts(),
         fetchColorSizes(),
       ]);
     } catch (e) {
@@ -68,29 +68,7 @@ class _CartpageState extends State<Cartpage> {
       print('Error fetching products: $e');
     } 
   }
-   Future<void> fetchProducts() async {
-    setState(() {
-      isLoading = true; 
-    });
-    try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Products'));
-      if (response.statusCode == 200) {
-        setState(() {
-          products = jsonDecode(response.body);
-        });
-        print('product at home ${response.body}');
-      } else {
-        print('Failed to load products: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Kết thúc tải dữ liệu
-      });
-    }
-  }
-   Future<void> fetchColorSizes() async {
+  Future<void> fetchColorSizes() async {
     try {
       final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/ColorSizes'));
       if (response.statusCode == 200) {
@@ -210,7 +188,7 @@ class _CartpageState extends State<Cartpage> {
                 itemCount: carts.length,
                 itemBuilder: (context, index) {
                 final cart = carts[index];
-                final product = products.firstWhere((product)=>product?['id'] == cart?['productId'] ,orElse: () => null,);
+                final product = widget.products.firstWhere((product)=>product?['id'] == cart?['productId'] ,orElse: () => null,);
                 final colorSize = colorSizes.firstWhere((colorSize)=>colorSize?['id'] == cart?['colorSizeId'],orElse: () => null, );
               
                 final finalPrice = product['promo'] > 0 ? (product['price'] -  product['promo']*0.01 * product['price'])  : product['price']  ;
@@ -223,183 +201,184 @@ class _CartpageState extends State<Cartpage> {
                 return 
                 Container(
                   margin:EdgeInsets.symmetric(horizontal: 12, vertical: 5) ,
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)
                   ),
                   child: Row(children: [
                     //selected cart
-                    IconButton(
-                        icon: Icon(
-                          isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                          color: isSelected ?Color(0xFF4C53A5) : Colors.grey,
-                        ),
-                        onPressed: () {
-                          updateSelectedCart(selected);
-                        }
+                    Transform.translate(
+                      offset: Offset(-8, 0), 
+                      child: Column(
+                        children: [
+                          InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Xác nhận'),
+                                            content: Text('Bạn có chắc chắn muốn xóa đơn hàng?'),
+                                            backgroundColor: Colors.white,
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(); 
+                                                },
+                                                child: Text('Hủy'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  deleteCart(cart);
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Xóa',style: TextStyle(color: Colors.red),),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }, child: Icon(Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                            
+                          IconButton(
+                              padding: EdgeInsets.all(0),
+                              icon: Icon(
+                                isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                                color: isSelected ?Color(0xFF4C53A5) : Colors.grey,
+                              ),
+                              onPressed: () {
+                                updateSelectedCart(selected);
+                              }
+                          ),
+                        ],
+                      ),
                     ),
                     //image
-                    Container(
-                      height: 50,
-                      width: 50,
-                      child: product == null ?Icon(Icons.image_not_supported, size: 50, color: Colors.grey)
-                            : product['image'] != null && product['image'].isNotEmpty
-                            ? Image.memory(base64Decode(product['image']), height: 50)
-                            : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-        
+                    Transform.translate(
+                      offset: Offset(-15, 0), 
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: product == null ?Icon(Icons.image_not_supported, size: 50, color: Colors.grey)
+                              : product['image'] != null && product['image'].isNotEmpty
+                              ? Image.memory(base64Decode(product['image']), height: 50)
+                              : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                              
+                      ),
                     ),
                     //infor cart
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                    Container(
+                      width: 130,
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: 135,
-                              child: Text(product['name'],
-                               maxLines: 1, 
-                               overflow: TextOverflow.ellipsis,  
+                            Text(product['name'],
+                              maxLines: 1, 
+                              overflow: TextOverflow.ellipsis,  
+                            style:TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF4C53A5),
+                              )
+                            ), 
+                            SizedBox(height: 4,), 
+                            Text(
+                              'Giá: ${ NumberFormat('###,###').format(finalPrice)} đ',
                               style:TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF4C53A5),
                                 )
                               ),
-                            ),
-                            SizedBox(
-                                width: 135,
-                              child: Text(
+                           
+                            ],
+                      ),   
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
                                 '${colorSize?['color']} - Size ${colorSize['size']}'
                                 ,
                                     maxLines: 1, 
-                                 overflow: TextOverflow.ellipsis, 
+                                overflow: TextOverflow.ellipsis, 
                               style:TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.normal,
                                   color: Color.fromARGB(255, 63, 63, 65),
                                 )
-                              ),
-                            ),
-
-                            Text(
-                              NumberFormat('###,###').format(finalPrice),
-                            style:TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF4C53A5),
-                              )
-                            ),
-                          ],
-                      ),
-                    ),
-                    Spacer(),
-                    //quantity
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Xác nhận'),
-                                  content: Text('Bạn có chắc chắn muốn xóa đơn hàng?'),
-                                  backgroundColor: Colors.white,
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); 
-                                      },
-                                      child: Text('Hủy'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        deleteCart(cart);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Xóa',style: TextStyle(color: Colors.red),),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-
-                            child: Icon(Icons.delete,
-                              color: Colors.red,
-                            ),
-                          ),
-                          Container(
-                            width: 120,
-                            height: 40,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end, 
-                              crossAxisAlignment: CrossAxisAlignment.center, 
-                              children: [
-                                InkWell(
-                                  onTap: (){updateQuantity("minus", cart, cart['quantity']);},
-                                  child: Container(
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blueGrey,
-                                          spreadRadius: 1,
-                                          blurRadius: 10,
-                                        )
-                                      ]
-                                    ),
-                                    child:Icon(CupertinoIcons.minus, 
-                                    size: 18,
-                                    ) ,
+                        ), 
+                         Container(
+                                  width: 120,
+                                  height: 40,
+                                  child: Row( 
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end, 
+                                    children: [
+                                      InkWell(
+                                        onTap: (){updateQuantity("minus", cart, cart['quantity']);},
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.blueGrey,
+                                                spreadRadius: 1,
+                                                blurRadius: 10,
+                                              )
+                                            ]
+                                          ),
+                                          child:Icon(CupertinoIcons.minus, 
+                                          size: 18,
+                                          ) ,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 10),
+                                        child:Text (
+                                          cart['quantity'].toString(), 
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF4C53A5),
+                                          ) ,
+                                        ) ,
+                                      ),
+                                      InkWell(
+                                        onTap: (){updateQuantity("add", cart, cart['quantity']);},
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.blueGrey,
+                                                spreadRadius: 1,
+                                                blurRadius: 10,
+                                              )
+                                            ]
+                                          ),
+                                          child:Icon(CupertinoIcons.plus, 
+                                          size: 18,
+                                          ) ,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child:Text (
-                                    cart['quantity'].toString(), 
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF4C53A5),
-                                    ) ,
-                                  ) ,
-                                ),
-                                InkWell(
-                                   onTap: (){updateQuantity("add", cart, cart['quantity']);},
-                                  child: Container(
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blueGrey,
-                                          spreadRadius: 1,
-                                          blurRadius: 10,
-                                        )
-                                      ]
-                                    ),
-                                    child:Icon(CupertinoIcons.plus, 
-                                    size: 18,
-                                    ) ,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                                ), 
+                        
+                      ],
                     )
-                  ],
+                    ],
                   ),
                 );
              }
@@ -426,7 +405,7 @@ class _CartpageState extends State<Cartpage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Total",
+                        "Tạm tính",
                         style: TextStyle(
                           color: Color(0xFF4C53A5),
                           fontSize: 22,
@@ -450,11 +429,11 @@ class _CartpageState extends State<Cartpage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CheckoutPage(selectedCarts: selectedCarts,total: total,), 
+                          builder: (context) => CheckoutPage(products: widget.products, selectedCarts: selectedCarts,total: total,), 
                         ),
                       );
                       else{
-                        print('Vui long chon san pham de tirp tuc');
+                        print('Vui long chon san pham de tiep tuc');
                         return;
                       }
                     },

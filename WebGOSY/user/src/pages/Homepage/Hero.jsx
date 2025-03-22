@@ -28,14 +28,14 @@ const Hero = () => {
     const getProductsById = (ids) => {
         return products.filter((product) => ids.includes(product.id));
     };
-    const heroProducts = getProductsById([1, 2]);
+    const heroProducts = getProductsById([4, 5]);
 
     const handleHeroClick = (productId) => {
         navigate(`${PathNames.PRODUCT_DETAILS}/${productId}`);
     };
     return (
         <div className="container">
-            <div className="overflow-hidden rounded-3xl min-h-[350px] px-4 sm:min-h-[650px]  flex justify-center items-center mt-10 mb-11 shadow-[0px_8px_20px_rgba(0,0,0,0.5)]">
+            <div className="overflow-hidden rounded-3xl min-h-[340px] xl:min-h-[650px] mx-3 flex justify-center items-center mt-10 mb-11 shadow-[0px_8px_20px_rgba(0,0,0,0.5)]">
                 <div className="container pb-8 sm:pb-0">
                     <Carousel
                         dots={false}
@@ -49,24 +49,24 @@ const Hero = () => {
                     >
                       {heroProducts.map((product) => (
                         <div key={product.id} className="py-2 sm:py-12 lg:py-16">
-                            <div className="flex flex-row  items-center items-start gap-8 sm:gap-16 sm:px-24">
+                            <div className="flex flex-row  items-center items-start mx-4 px-2 gap-8 xl:gap-16 xl:px-24">
                             {/* Text content section */}
                             <div className="flex flex-col justify-center gap-4 text-left w-1/2">
                                 <h1
-                                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-indigo-200 mb-4"
-                                style={{ textShadow: "-2px 12px 8px rgb(12, 0, 65)" }}
+                                className="text-3xl sm:text-5xl lg:text-7xl font-bold text-indigo-200 mb-4"
+                                style={{ textShadow: "-2px 5px 8px rgb(68, 48, 159)" }}
                                 >
                                 {product.promo} % Off
                                 </h1>
                                 <h2
-                                className="text-xl sm:text-3xl lg:text-4xl uppercase text-gray-200 font-bold leading-none mb-4"
-                                style={{ textShadow: "2px 4px 1px rgba(0, 0, 0, 0.5)" }}
+                                className="text-lg sm:text-2xl lg:text-3xl uppercase text-gray-200 font-bold leading-none mb-4"
+                                style={{ textShadow: "2px 2px 1px rgba(0, 0, 0, 0.5)" }}
                                 >
                                 {product.name}
                                 </h2>
                                 <h3
                                 className="text-lg sm:text-2xl lg:text-3xl text-gray-200 font-bold leading-none"
-                                style={{ textShadow: "0px 5px 1px rgba(0, 0, 0, 0.5)" }}
+                                style={{ textShadow: "1px 2px 1px rgba(0, 0, 0, 0.5)" }}
                                 >
                                 Sep 10 - Sep 17
                                 </h3>
@@ -79,7 +79,7 @@ const Hero = () => {
                             </div>
 
                             {/* Image section */}
-                            <div className="sm:w-3/4 order-1 sm:order-2">
+                            <div className="w-1/2 sm:w-3/4 order-1 sm:order-2">
                                 <div
                                 data-aos="fade-left"
                                 data-aos-duration="500"
@@ -89,7 +89,7 @@ const Hero = () => {
                                 <img
                                     src={`data:image/jpeg;base64,${product.image}`}
                                     alt=""
-                                    className="w-70 sm:w-90 lg:w-96 h-auto object-contain mx-auto relative z-40"
+                                    className="w-50 sm:w-90 lg:w-96 h-auto object-contain mx-auto relative z-40"
                                 />
                                 </div>
                             </div>

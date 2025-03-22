@@ -31,12 +31,11 @@ namespace WebAPI.Services
             {
                 throw new InvalidOperationException("Email đã tồn tại.");
             }
-
-            if (await _context.Accounts.AnyAsync(a => a.Username == account.Username))
+            if (account.UserId == null)
             {
-                throw new InvalidOperationException("Username đã được sử dụng.");
+                throw new InvalidOperationException("Không tìm thấy user");
             }
-
+           
             // Mã hóa mật khẩu
             account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
 

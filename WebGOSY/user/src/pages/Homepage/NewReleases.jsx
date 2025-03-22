@@ -181,7 +181,7 @@ const NewReleases = () => {
                                     <Link
                                         to={`${PathNames.PRODUCT_DETAILS}/${item.id}`}
                                     >
-                                        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                                        <h5 className="text-[16px] sm:text-xl md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                             {item.name}
                                         </h5>
                                     </Link>

@@ -13,7 +13,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 class AccountWidget extends StatefulWidget {
-  const AccountWidget({super.key});
+  List<dynamic> products = []; 
+
+ AccountWidget({super.key, required this.products});
 
   @override
   _AccountWidgetState createState() => _AccountWidgetState();
@@ -26,7 +28,6 @@ class _AccountWidgetState extends State<AccountWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUserStatus();
       fetchOrderDetails(); 
-      fetchProducts();
     });
   }
   Map<String, dynamic>? account;
@@ -35,8 +36,7 @@ class _AccountWidgetState extends State<AccountWidget> {
   bool isLoading = false;
   dynamic user;
   List<dynamic> orderDetails = []; 
-  List<dynamic> products = []; 
-
+  
 
   Future<void> fetchUserAccount(int id) async {
     try {
@@ -64,6 +64,12 @@ class _AccountWidgetState extends State<AccountWidget> {
         if (response.statusCode == 200) {
           setState(() {
             orderDetails = jsonDecode(response.body);
+            orderDetails.sort((a, b) {
+              DateTime dateA = DateTime.parse(a['createdAt']);
+              DateTime dateB = DateTime.parse(b['createdAt']);
+              // So sánh theo thứ tự giảm dần (mới nhất lên đầu)
+              return dateB.compareTo(dateA);
+            });
           });
            print('order detail at respone :${orderDetails} ');
         } else {
@@ -77,29 +83,7 @@ class _AccountWidgetState extends State<AccountWidget> {
       });
     }
     }
-  Future<void> fetchProducts() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Products'));
-      if (response.statusCode == 200) {
-        setState(() {
-          products = jsonDecode(response.body);
-        });
-      } else {
-        print('Failed to load categories: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching categories: $e');
-    }finally{
-    setState(() {
-      isLoading = false;
-    });
-    }
-  }
-  
-  
+ 
   void _showOrderDetails(Map<String, dynamic> order) {
      print('order detail :${orderDetails} ');
     showDialog(
@@ -130,7 +114,7 @@ class _AccountWidgetState extends State<AccountWidget> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          content: OrderDetail(orderDetails: orderDetails, orders: orders, products: products, orderId:  order?['id']),
+          content: OrderDetail(orderDetails: orderDetails, orders: orders, products: widget.products, orderId:  order?['id']),
             actions: [
             TextButton(
               onPressed: () {
@@ -265,8 +249,8 @@ class _AccountWidgetState extends State<AccountWidget> {
           children: [
              Container(
               margin: EdgeInsets.only(top: 8),
-              width: 175,
-              height: 175,
+              width: 150,
+              height: 150,
               decoration: BoxDecoration(
                borderRadius: BorderRadius.circular(1000),
               ),
@@ -276,7 +260,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                         base64Decode(user?['image']),
                         fit: BoxFit.cover,
                       )
-                    : Icon(Icons.account_circle, size: 180),
+                    : Icon(Icons.account_circle, size: 150),
               ),
                 
               ),
@@ -483,7 +467,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                                       children: [
                                         Text('Đơn hàng', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:Color(0xFF4C53A5)),),
                                         Spacer(),
-                                        Text('Đã mua: ${user?['totalBuy']}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:Color.fromARGB(255, 70, 70, 72)),),     
+                                        Text('Đã mua: ${NumberFormat('###,###').format(user?['totalBuy'])} đ', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color:Color.fromARGB(255, 70, 70, 72)),),     
                                       ]
                           ), ),
                         Expanded(child: buildOrderItems()),

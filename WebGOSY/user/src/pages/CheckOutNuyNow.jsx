@@ -285,8 +285,58 @@ const CheckoutBuyNow = () => {
                         ? storeAddress
                         : customerInfo.address,
             };
-
-            // Gửi yêu cầu tạo đơn hàng
+            if (paymentMethod === "MoMo") {
+                try {
+                    // Gọi API tạo thanh toán MOMO
+                    const paymentResponse = await fetch(`${API_URL}/api/Payment/create-payment`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            amount: finalAmount,
+                            orderInfo: `Thanh toán đơn hàng cho ${customerInfo.name}`,
+                        }),
+                    });
+    
+                    const result = await paymentResponse.json();
+    
+                    if (!paymentResponse.ok) {
+                        throw new Error(
+                            result.message || "Lỗi kết nối đến cổng thanh toán"
+                        );
+                    }
+    
+                    if (result.payUrl) {
+                        localStorage.setItem("pendingOrder", JSON.stringify({
+                            userId:userId,
+                            totalPrice: finalAmount,
+                            paymentMethod:paymentMethod,
+                            phone: customerInfo.phone,
+                            note: notes,
+                            address:
+                                shippingOption === "store" ? storeAddress : customerInfo.address,
+                            status: "Đã thanh toán",
+                            cartItems:[productBuyNow], 
+                        }));
+                        // Chuyển hướng đến trang thanh toán MOMO
+                        window.location.href = result.payUrl;
+                    } else {
+                       
+                        throw new Error("Không nhận được URL thanh toán");
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi xử lý thanh toán:", error);
+                    notification.error({
+                        message: "Lỗi thanh toán",
+                        description:
+                            error.message || "Có lỗi xảy ra khi xử lý thanh toán",
+                        duration: 4,
+                        placement: "bottomLeft",
+                    });
+                }
+            } else{
+                 // Gửi yêu cầu tạo đơn hàng
             const orderResponse = await fetch(`${API_URL}/api/Orders`, {
                 method: "POST",
                 headers: {
@@ -337,6 +387,8 @@ const CheckoutBuyNow = () => {
                     pauseOnHover: true
                 });
             }
+            }
+           
         } catch (error) {
             console.error("Lỗi trong quá trình xử lý:", error);
             message.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");

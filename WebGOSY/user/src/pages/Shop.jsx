@@ -361,7 +361,7 @@ const Shop = () => {
                     )}
                 </div>
 
-                <div className="mb-10">
+                <div className="mb-14">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 place-items-center">
                         {currentProducts.map((item) => (
                             <div

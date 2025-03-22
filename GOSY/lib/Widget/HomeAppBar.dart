@@ -20,7 +20,7 @@ class HomeAppBar extends StatelessWidget {
             child:  RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(
-                    text: 'Sh',
+                    text: 'Go',
                     style: GoogleFonts.portLligatSans(
                       
                       fontSize: 30,
@@ -29,11 +29,11 @@ class HomeAppBar extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: 'op',
+                        text: 'sy S',
                         style: TextStyle(color: Colors.black, fontSize: 30),
                       ),
                       TextSpan(
-                        text: ' App',
+                        text: 'tore',
                         style: TextStyle(color: Color(0xFF4C53A5), fontSize: 30),
                       ),
                     ]),

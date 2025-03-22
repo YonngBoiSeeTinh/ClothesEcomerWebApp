@@ -12,52 +12,37 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class CheckoutPage extends StatefulWidget {
    List<dynamic> selectedCarts = [];
+  List<dynamic> products = [];
    double total; 
-   CheckoutPage({super.key, required this.selectedCarts, required this.total});
+   CheckoutPage({super.key, required this.selectedCarts, required this.total, required this.products});
  @override
   _CheckoutPageState createState() => _CheckoutPageState();
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
- List<dynamic> products = [];
+
  List<dynamic> colorSizes = [];
+ String? selectedMethod;
+ final List<String> paymentMethods = ["Tiền mặt", "Thanh toán qua Momo"];
  bool isLoading = false;
  dynamic user;
  dynamic promotion;
   void initState() {
     super.initState();
     fetchColorSizes();
-    fetchProducts();
     getUser();
   }
  
- Future<void> fetchProducts() async {
-    setState(() {
+ Future<void> fetchColorSizes() async {
+  setState(() {
       isLoading = true; 
     });
-    try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Products'));
-      if (response.statusCode == 200) {
-        setState(() {
-          products = jsonDecode(response.body);
-        });
-      } else {
-        print('Failed to load products: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Kết thúc tải dữ liệu
-      });
-    }
-  }
-
- Future<void> fetchColorSizes() async {
     try {
       final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/ColorSizes'));
       if (response.statusCode == 200) {
@@ -69,31 +54,88 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
     } catch (e) {
       print('Error fetching ColorSizes: $e');
+    }finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
  void getUser() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     await  userProvider.loadSavedLogin();
-    print('userProvider : ${userProvider.user}');
     setState(() {
       user = userProvider.user;
     });
   }
-  
- Future<void> addOrder() async {
+
+Future<void> redirectToPayment(String payUrl) async {
+  final Uri uri = Uri.parse(payUrl);
+  if (await canLaunchUrl(uri)) {
+    // Sử dụng chế độ mở trong ứng dụng bên ngoài
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  } else {
+    throw Exception("Không thể mở URL: $payUrl");
+  }
+}
+Future<void> saveOrderToSharedPreferences(dynamic order) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String orderJson = jsonEncode(order);
+  await prefs.setString('order', orderJson);
+}
+Future<void> addOrder() async {
   dynamic order = {
     "userId": user?['id'],
     "totalPrice": widget.total,
     "status": "Chờ xác nhận",
     "name": user?['name'],
-    "paymentMethod": "Tiền mặt",
+    "paymentMethod": selectedMethod,
     "paymentStatus": "Chưa thanh toán",
     "cancellationReason": "",
     "note": "",
     "phone": user?['phone'],
     "address": user?['address']
   };
-  List<int> ids = widget.selectedCarts.map((cart) => cart['id'] as int).toSet().toList(); // Loại bỏ các ID trùng lặp
+  if(selectedMethod == "Thanh toán qua Momo")  {
+    final momoRequest = {
+      "amount": widget.total.toInt().toString(),
+      "orderInfo": "Thanh toán đơn hàng qua MoMo cho ${user?['name']}",
+    };
+    print("momoRequest ${momoRequest}");
+     try {
+      // Gửi HTTP POST request
+      final response = await http.post(
+        Uri.parse("${ApiConfig.baseUrl}/api/Payment/create-paymentandroid"), // Địa chỉ API
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(momoRequest),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['errorCode'] == 0) {
+          order['status'] = "Đã thanh toán";
+          await saveOrderToSharedPreferences(order);
+          // Thành công: Chuyển hướng người dùng đến trang thanh toán MoMo
+          final payUrl = responseData['payUrl'];
+           if (payUrl != null) {
+            print("Redirecting to: $payUrl");
+            await redirectToPayment(payUrl); // Gọi hàm mở URL
+          }
+        } else {
+          print("Lỗi thanh toán: ${responseData['message']}");
+        }
+      } else {
+        print("Lỗi kết nối API: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("Lỗi khi gọi API thanh toán: $error");
+    }
+  
+  }
+  else{
+    List<int> ids = widget.selectedCarts.map((cart) => cart['id'] as int).toSet().toList(); // Loại bỏ các ID trùng lặp
   // Xóa giỏ hàng trước
   bool cartDeleted = await deleteCart(ids,user['id']);
   if (!cartDeleted) {
@@ -101,7 +143,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     SnackBar(content: Text('Không thể tạo đơn hàng, vui lòng thử lại'));
     return;
   }
-
   // Nếu xóa giỏ hàng thành công, tiếp tục thêm đơn hàng
   try {
     final response = await http.post(
@@ -144,10 +185,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         SnackBar(content: Text('Đơn hàng đã được tạo thành công, vui lòng đợi')),
       );
     
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AccountWidget()),
-      );
+      Navigator.pushNamed(context, '/account');
     } else {
       print('Failed to add order: ${response.statusCode}');
       SnackBar(content: Text('Tạo đơn hàng bị lỗi, vui lòng thử lại'));
@@ -155,7 +193,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   } catch (e) {
     print('Error adding order: $e');
   }
-     
+  }   
 }
  
  Future<bool> deleteCart(List<int> ids,int id) async {
@@ -220,7 +258,7 @@ Future<void> updateColorSizes(int id, int quantity)async {
   }
 
 dynamic getProduct (int id){
-    return products.firstWhere((item) => item['id'] == id);
+    return widget.products.firstWhere((item) => item['id'] == id);
 }
 Future<void> updateProductSold(int id, int quantity)async {
   dynamic product= getProduct(id);
@@ -344,7 +382,32 @@ void showPromotion() {
                   
             ),
           ),
-          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  color: Color(0xFFEDECF2),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: DropdownButton<String>(
+                    value: selectedMethod,
+                    hint: Text("Chọn phương thức thanh toán" ,style: TextStyle(color: Color(0xFF4C53A5) , fontSize: 18)),
+                    items: paymentMethods.map((String method) {
+                      return DropdownMenuItem<String>(
+                        value: method,
+                        child: Text(method,style: TextStyle(color: Color(0xFF4C53A5) , fontSize: 18)),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedMethod = newValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
           Container(
             padding: EdgeInsets.only(left: 20, bottom: 5),
             height: 60,
@@ -423,7 +486,7 @@ void showPromotion() {
              children: [
                Text('${user?['name']} ',
                style:TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF4C53A5),
                   )
@@ -474,13 +537,12 @@ void showPromotion() {
     );
   }
   Widget buildCheckoutItem() {
-    return isLoading
-      ? const Center(child: CircularProgressIndicator())
-      : ListView.builder(
+    return   isLoading? Center(child: CircularProgressIndicator())
+             :ListView.builder(
                 itemCount: widget.selectedCarts.length,
                 itemBuilder: (context, index) {
                 final cart = widget.selectedCarts[index];
-                final product = products.firstWhere((product)=>product?['id'] == cart?['productId'] ,orElse: () => null);
+                final product = widget.products.firstWhere((product)=>product?['id'] == cart?['productId'] ,orElse: () => null);
                 final colorSize = colorSizes.firstWhere((colorSize)=>colorSize?['id'] == cart?['colorSizeId'],orElse: () => null );
                 final finalPrice = product['promo'] > 0 ? (product['price'] -  product['promo']*0.01 * product['price']) *cart['quantity'] : product['price'] *cart['quantity'] ;
                 return 
@@ -508,7 +570,7 @@ void showPromotion() {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                            SizedBox(
-                            width: 185,
+                            width: 170,
                              child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

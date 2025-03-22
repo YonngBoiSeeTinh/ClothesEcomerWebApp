@@ -30,23 +30,23 @@ const Featured = () => {
                 <div
                     key={category.id}
                     onClick={() => handleCategoryBrowse(category.id)}
-                    className="flex-none w-[48%]  lg:w-[30%] py-6 px-4  text-black 
-                    rounded-3xl relative h-[100px] sm:h-[200px] flex flex-col justify-between cursor-pointer category_item"
+                    className="flex-none w-[48%] md:-w[35%]  lg:w-[30%] py-6 px-4  text-black 
+                    rounded-3xl relative h-[100px] sm:h-[100px] lg:h-[100px] xl:h-[200px] flex flex-col justify-between cursor-pointer category_item"
                 >
                     {/* Nội dung bên trên */}
                     <div className="flex justify-between items-center">
-                        <p className="text-lg  sm:text-[40px] lg:text-[40px] font-bold sm:font-semibold">
+                        <p className="text-[12px] sm:text-[20px]  xl:text-[40px] font-bold sm:font-semibold overflow-hidden whitespace-nowrap">
                             {category.name}
                         </p>
                         <img
                             src={`data:image/jpeg;base64,${category?.image}`}
                             alt=""
-                            className="w-16 sm:w-20 lg:w-24 object-contain"
+                            className="w-16 h-16 sm:h-20 sm:w-20 lg:w-24 object-contain"
                         />
                     </div>
 
                     {/* Nội dung bên dưới */}
-                    <div className="text-sm sm:text-base  hidden  xl:hiden lg:block">
+                    <div className="text-sm sm:text-base  hidden sm:hidden md:hidden  xl:block">
                         <p>Trải nghiệm các sản phẩm tuyệt vời</p>
                     </div>
                 </div>

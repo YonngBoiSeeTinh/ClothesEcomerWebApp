@@ -75,9 +75,10 @@ input:-webkit-autofill {
 }
 .card_item {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
   }
   .card_item:hover {
-    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 10px 25px rgba(229, 56, 186, 0.2);
     border:1px solid rgb(174, 152, 213);
     transform: translateY(-4px);
   }

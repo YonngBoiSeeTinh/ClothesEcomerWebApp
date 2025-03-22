@@ -107,10 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Cập nhật thông tin thành công!')),
         ); 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AccountWidget()),
-        );
+        Navigator.pushNamed(context, '/account');
       } else {
         var responseBody = await response.stream.bytesToString();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -147,10 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           InkWell(
             onTap: () {
-             Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => AccountWidget()),
-                        );
+              Navigator.pushNamed(context, '/account');
             },
             child: Icon(
               Icons.arrow_back,
@@ -227,11 +221,16 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   builtProfileAppBar(),
-                  builtProfileAvatar(),
-                  Padding(
+                  Container(
+                     height: MediaQuery.of(context).size.height,
+                    decoration:BoxDecoration (
+                      color: Color(0xFFEDECF2),
+                      borderRadius: BorderRadius.only(topLeft:Radius.circular(30) , topRight: Radius.circular(30) ),
+                    ),
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
+                         builtProfileAvatar(),
                         _buildTextField('Họ và tên', nameController),
                         _buildTextField('Số điện thoại', phoneController, keyboardType: TextInputType.phone),
                         _buildTextField('Địa chỉ', addressController),

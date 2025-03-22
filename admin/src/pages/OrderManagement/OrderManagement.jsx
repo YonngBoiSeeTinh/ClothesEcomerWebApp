@@ -42,7 +42,7 @@ const OrderManagement = () => {
             console.log("res order", response);
             if (response.status == 200) {
                 const data = response.data;
-                setOrders(data);
+                setOrders(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
             } else {
                 console.error("Failed to fetch orders");
             }

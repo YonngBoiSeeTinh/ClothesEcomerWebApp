@@ -114,13 +114,12 @@ const Register = ({ onRegisterSuccess }) => {
                 // Prepare user data to send to your server
                 const formData = new FormData();
                 formData.append("name", name);
-                formData.append("accountName", accountName);
-                //formData.append("gender", gender);
                 formData.append("address", address);
                 formData.append("phone", phone);
-                //formData.append("dayOfBirth", dayOfBirth);
-                formData.append("email", email);
-                formData.append("password", password);
+
+                // formData.append("accountName", accountName);
+                // formData.append("email", email);
+                // formData.append("password", password);
 
                 if (userAvatar) {
                     formData.append("userAvatar", userAvatar);

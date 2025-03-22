@@ -27,7 +27,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 0.7,
+                  childAspectRatio: 0.67,
                 ),
                 itemCount: widget.products.length,
                 itemBuilder: (context, index) {

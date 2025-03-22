@@ -20,7 +20,14 @@ class CancleOrder extends StatefulWidget {
 class _CancleOrderState extends State<CancleOrder> {
   
 Future<void> updateOrder() async {
-    try {
+  if(cancelnReasonController == "" || cancelnReasonController == null){
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Vui lòng nhập lý do hủy')),
+    );
+    return;
+  }
+  else
+    {try {
       Map<String, dynamic> orderUpdate = Map<String, dynamic>.from(widget.order);
       orderUpdate['cancellationReason'] = cancelnReasonController.text;
       orderUpdate['status'] = 'Đã hủy';
@@ -36,7 +43,7 @@ Future<void> updateOrder() async {
         await ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Hủy đơn thành công!')),
         ); 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AccountWidget()));
+       Navigator.pushNamed(context, '/account');
         
       } else {
         var responseBody = await response.body;
@@ -49,7 +56,7 @@ Future<void> updateOrder() async {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Đã xảy ra lỗi: $error')),
       );
-    }
+    }}
   }
 
   @override
@@ -69,7 +76,7 @@ Future<void> updateOrder() async {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: TextField(
             controller: cancelnReasonController,
-            maxLines: 3,
+            maxLines: 2,
             decoration: InputDecoration(
               labelText: 'Lý do hủy',
               border: OutlineInputBorder(),

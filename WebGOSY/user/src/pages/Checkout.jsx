@@ -139,7 +139,7 @@ const Checkout = () => {
                     memberDiscount = {
                         name: "Ưu đãi khách hàng bạc",
                         value: 7,
-                        minPrice: 2000000,
+                        minPrice: 200000,
                         maxValue: 2500000,
                         code: "MEMBERVIP",
                     };
@@ -147,7 +147,7 @@ const Checkout = () => {
                     memberDiscount = {
                         name: "Ưu đãi khách hàng vàng",
                         value: 10,
-                        minPrice: 2000000,
+                        minPrice: 200000,
                         maxValue: 3500000,
                         code: "MEMBERVIP",
                     };
@@ -155,7 +155,7 @@ const Checkout = () => {
                     memberDiscount = {
                         name: "Ưu đãi khách hàng kim cương",
                         value: 10,
-                        minPrice: 2000000,
+                        minPrice: 200000,
                         maxValue: 4500000,
                         code: "MEMBERVIP",
                     };
@@ -307,14 +307,13 @@ const Checkout = () => {
         if (paymentMethod === "MoMo") {
             try {
                 // Gọi API tạo thanh toán MOMO
-                const paymentResponse = await fetch(`${API_URL}/payment`, {
+                const paymentResponse = await fetch(`${API_URL}/api/Payment/create-payment`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
                         amount: finalAmount,
-                        extraData: JSON.stringify(paymentData),
                         orderInfo: `Thanh toán đơn hàng cho ${customerInfo.name}`,
                     }),
                 });
@@ -328,15 +327,22 @@ const Checkout = () => {
                 }
 
                 if (result.payUrl) {
-                    // Lưu ID sản phẩm để xóa khỏi giỏ hàng sau khi thanh toán thành công
-                    localStorage.setItem(
-                        "checkoutItems",
-                        JSON.stringify(cartItems.map((item) => item.productId))
-                    );
-
+                    localStorage.setItem("pendingOrder", JSON.stringify({
+                        userId:userId,
+                        name:customerInfo.name,
+                        totalPrice: finalAmount,
+                        paymentMethod:paymentMethod,
+                        phone: customerInfo.phone,
+                        note: notes,
+                        address:
+                            shippingOption === "store" ? storeAddress : customerInfo.address,
+                        status: "Đã thanh toán",
+                        cartItems:cartItems, 
+                    }));
                     // Chuyển hướng đến trang thanh toán MOMO
                     window.location.href = result.payUrl;
                 } else {
+                   
                     throw new Error("Không nhận được URL thanh toán");
                 }
             } catch (error) {
@@ -608,9 +614,6 @@ const Checkout = () => {
                     
                     <option value="COD">Thanh toán khi nhận hàng</option>
                     <option value="MoMo">Thanh toán qua MOMO</option>
-                    <option value="Thanh toán qua VNpay">
-                        Thanh toán qua VNpay
-                    </option>
                 </select>
             </div>
 

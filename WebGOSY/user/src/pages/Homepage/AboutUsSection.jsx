@@ -15,7 +15,7 @@ const AboutUsSection = () => {
                     data-aos-anchor-placement="center-bottom"
                 >
                     <div className="max-w-[23rem]">
-                        <h1 className="lg:text-5xl md:text-5xl sm:text-5xl font-bold mb-4 text-gray-200"    style={{textShadow:"0 4px 5px rgb(87, 68, 154)" }}>
+                        <h1 className="lg:text-5xl md:text-5xl sm:text-5xl text-3xl font-bold mb-4 text-gray-200"    style={{textShadow:"0 4px 5px rgb(87, 68, 154)" }}>
                             Đây là GOSY
                         </h1>
                         <p className="text-lg mb-4 tracking-tight text-gray-400">

@@ -9,82 +9,33 @@ import 'package:flutter/material.dart';
  
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
-
+  
+  List<dynamic> products = [];
+  List<dynamic> categories = [];
+   Homepage({super.key, required this.products, required this.categories});
   @override
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
-  List<dynamic> products = [];
-  List<dynamic> categories = [];
-  bool isLoading = false;
-
+  
   @override
   void initState() {
     super.initState();
-    fetchProducts(); 
-    fetchCategories();
   }
 
-  Future<void> fetchProducts() async {
-    setState(() {
-      isLoading = true; 
-    });
-    try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Products'));
-      if (response.statusCode == 200) {
-        setState(() {
-          products = jsonDecode(response.body);
-        });
-        print('product at home ${response.body}');
-      } else {
-        print('Failed to load products: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Kết thúc tải dữ liệu
-      });
-    }
-  }
-   Future<void> fetchCategories() async {
-    setState(() {
-      isLoading = true; 
-    });
-    try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Categories'));
-      if (response.statusCode == 200) {
-        setState(() {
-          categories = jsonDecode(response.body);
-        });
-        print('categories ${response.body}');
-      } else {
-        print('Failed to load products: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Kết thúc tải dữ liệu
-      });
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     // Trang hiện tại dựa trên `_currentIndex`
     Widget currentPage;
     if (_currentIndex == 0) {
-      currentPage = isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ProductHomepage(products: products, categories: categories,);
+      currentPage = ProductHomepage(products: widget.products, categories: widget.categories,);
     } else if (_currentIndex == 1) {
-      currentPage = const Cartpage();
+      currentPage =  Cartpage(products:widget.products);
     } else {
-      currentPage = const AccountWidget();
+      currentPage =  AccountWidget(products:widget.products);
     }
 
     return Scaffold(

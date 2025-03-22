@@ -72,12 +72,12 @@ class _CategoryManagerState extends State<CategoryManager> {
 
    Future<void> deleteCategory(int id) async {
     try {
-      final response = await http.delete(Uri.parse('${ApiConfig.baseUrl}/api/Categorys/$id')); 
+      final response = await http.delete(Uri.parse('${ApiConfig.baseUrl}/api/Categories/$id')); 
       if (response.statusCode == 204) {
         showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Alter(message: 'Cập nhật sản phẩm thành công!');
+          return Alter(message: 'Xóa thành công!');
         },
       ).then((_) {
         setState(() {

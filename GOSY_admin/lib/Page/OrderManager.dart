@@ -184,22 +184,27 @@ class _OrderManagerState extends State<OrderManager> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text( order['name'] != null ?
-                      order['name'] : "",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF4C53A5)),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Total: ${order['totalPrice']} VND',
-                      style: TextStyle(fontSize: 16, color: Color(0xFF4C53A5)),
-                    ),
-                  ],
+                SizedBox(
+                  width: 200,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text( order['name'] != null ?
+                        order['name'] : "",
+                        maxLines: 1, 
+                                 overflow: TextOverflow.ellipsis, 
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4C53A5)),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Total: ${order['totalPrice']} VND',
+                        style: TextStyle(fontSize: 16, color: Color(0xFF4C53A5)),
+                      ),
+                    ],
+                  ),
                 ),
                 Column(
                   children: [

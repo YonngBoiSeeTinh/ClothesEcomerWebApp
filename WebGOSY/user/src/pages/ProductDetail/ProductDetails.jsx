@@ -319,9 +319,9 @@ const ProductDetails = () => {
     return (
         <div className="mt-14">
             <div className="container mx-auto px-4 py-8 flex flex-col mb-24">
-                <div className="flex flex-wrap -mx-4 justify-center xl:ml-40 lg:ml-10">
+                <div className="flex flex-wrap mx-4 justify-center xl:ml-40 lg:ml-10">
                     {/* <!-- Product Images --> */}
-                    <div className="w-full 2xl:w-[40%] xl:w-[50%] lg:w-[50%] md:w-[50%] md:max-h-[400px] sm:w-[50%] px-4 mb-8  mx-auto">
+                    <div className="w-full 2xl:w-[40%] xl:w-[50%] lg:w-[50%]  xl:max-h-[400px] sm:w-[50%] px-1 lg:px-4 mb-8  mx-auto">
                         <img
                             src={`data:image/jpeg;base64,${product.image}`}
                             alt={product.name}

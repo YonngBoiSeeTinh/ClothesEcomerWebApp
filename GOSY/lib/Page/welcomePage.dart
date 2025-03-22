@@ -119,12 +119,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget _backButton() {
     return InkWell(
       onTap: () {
-        Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Homepage(), 
-                ),
-        );
+         Navigator.pushNamed(context, '/');
       },child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

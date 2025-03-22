@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.white),
         child: Text(
           'Đăng nhập',
-          style: TextStyle(fontSize: 20, color:  Color(0xFF4C53A5)),
+          style: TextStyle(fontSize: 18, color:  Color(0xFF4C53A5)),
         ),
       ),
     );
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Text(
               'Bạn chưa có tài khoản?',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             SizedBox(
               width: 10,
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
               'Đăng ký ngay',
               style: TextStyle(
                   color: Color(0xfff79c4f),
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600),
             ),
           ],
