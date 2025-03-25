@@ -28,7 +28,7 @@ class _PaymentResultState extends State<PaymentResult> {
   Future<void> _initDeepLinkListener() async {
     _appLinks = AppLinks();
 
-    // Lấy deep link khởi tạo (nếu có)
+    // Lấy deep link khởi tạo 
     try {
       final initialUri = await _appLinks.getInitialAppLink();
       if (initialUri != null) {

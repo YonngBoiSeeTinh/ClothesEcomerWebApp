@@ -83,6 +83,7 @@ Future<void> redirectToPayment(String payUrl) async {
 Future<void> saveOrderToSharedPreferences(dynamic order) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String orderJson = jsonEncode(order);
+  print('order shared ${orderJson}');
   await prefs.setString('order', orderJson);
 }
 Future<void> addOrder() async {

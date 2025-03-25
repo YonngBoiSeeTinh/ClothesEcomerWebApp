@@ -20,6 +20,7 @@ public class PaymentController : ControllerBase
     private readonly string RedirectUrl;
     private readonly string RedirectUrlAndroid;
     private readonly string NotifyURL;
+    private readonly string NotifyURLAndroid;
     private readonly string RequestType;
 
     public PaymentController(HttpClient httpClient, IConfiguration configuration)
@@ -32,8 +33,9 @@ public class PaymentController : ControllerBase
         SecretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
         PartnerCode = "MOMO";
         RedirectUrl = "http://localhost:5173/payment-result";
-        RedirectUrlAndroid = "GOSY://payment-result";
+        RedirectUrlAndroid = "https://www.mygosyapp.com/paymentResult";
         NotifyURL = "http://localhost:5173/payment-failed";
+        NotifyURLAndroid = "https://www.mygosyapp.com/paymentResult";
         RequestType = "captureMoMoWallet";
     }
 
@@ -109,12 +111,11 @@ public class PaymentController : ControllerBase
             string requestId = orderId;
 
             // Generate signature
-            string rawSignature = $"partnerCode={PartnerCode}&accessKey={AccessKey}&requestId={requestId}&amount={cleanAmount}&orderId={orderId}&orderInfo={request.OrderInfo}&returnUrl={RedirectUrlAndroid}&notifyUrl={NotifyURL}&extraData={""}&storeId=MomoTestStore";
+            string rawSignature = $"partnerCode={PartnerCode}&accessKey={AccessKey}&requestId={requestId}&amount={cleanAmount}&orderId={orderId}&orderInfo={request.OrderInfo}&returnUrl={RedirectUrlAndroid}&notifyUrl={NotifyURLAndroid}&extraData={""}&storeId=MomoTestStore";
             string signature = GenerateHmacSha256(rawSignature, SecretKey);
 
             var requestBody = new
             {
-
                 partnerCode = PartnerCode,
                 partnerName = "GOSY Strore",
                 storeId = "MomoTestStore",
@@ -123,13 +124,13 @@ public class PaymentController : ControllerBase
                 orderId = orderId,
                 orderInfo = request.OrderInfo,
                 redirectUrl = RedirectUrlAndroid,
-                ipnUrl = NotifyURL,
+                ipnUrl = NotifyURLAndroid,
                 lang = "vi",
                 requestType = RequestType,
                 autoCapture = true,
                 signature = signature,
                 accessKey = AccessKey,
-                notifyUrl = NotifyURL,
+                notifyUrl = NotifyURLAndroid,
                 returnUrl = RedirectUrlAndroid,
             };
 

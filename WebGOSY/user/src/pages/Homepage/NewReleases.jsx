@@ -13,7 +13,7 @@ const NewReleases = () => {
     const [quantity, setQuantity] = useState(1);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
+    const [cartItems, setCartItems] = useState([]);
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -24,6 +24,26 @@ const NewReleases = () => {
             }
         };
         fetchProducts();
+        const fetchCartItems = async () => {
+           
+            if (!userId) {
+                console.error("Xin hãy đăng nhập để sử dụng tính năng này");
+            }
+            try {
+                const response = await fetch(`${API_URL}/api/Carts/User/${userId}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch cart items");
+                }
+                const data = await response.json();
+                setCartItems(data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching cart items:", error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+        fetchCartItems();
     }, []);
 
     const getProductsById = () => {
@@ -50,6 +70,11 @@ const NewReleases = () => {
             // setError("Failed to load product data. Please try again.");
         }
     };
+    const checkCartItem =async(cartItem)=>{
+        console.log("cart item", cartItems);
+        const check = cartItems.find((item) => item.productId == cartItem.productId && item.colorSizeId == cartItem.colorSizeId);
+        return check;
+    }
     const handleAddtoCart = async (selectedProduct) => {
         const colors = await fetchColorSize(selectedProduct.id);
 
@@ -97,42 +122,90 @@ const NewReleases = () => {
             quantity: parseInt(quantity),
         };
 
-        console.log("Sending cart item:", cartItem);
-
-        try {
-            const response = await fetch(`${API_URL}/api/Carts`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(cartItem),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Có lỗi xảy ra khi thêm vào giỏ hàng"
-                );
-            }
-
-            notification.success({
-                message: "Thành công",
-                description: "Đã thêm sản phẩm vào giỏ hàng",
-                duration: 4,
-                placement: "bottomRight",
-                pauseOnHover: true,
-            });
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-            notification.error({
-                message: "Lỗi",
-                description: error.message,
-                duration: 4,
-                placement: "bottomRight",
-                pauseOnHover: true,
-            });
+        const check = await checkCartItem(cartItem)
+        console.log('check cart ',check);
+        if (check){
+         const updatedData = {
+             ...check,
+             quantity: check.quantity + cartItem.quantity, 
+         };
+         try {
+             const response = await fetch(`${API_URL}/api/Carts/${check?.id}`, {
+                 method: "PUT",
+                 headers: {
+                     "Content-Type": "application/json",
+                 },
+                 body: JSON.stringify(updatedData),
+                 cache: "no-store",
+             });
+ 
+             if (!response.ok) {
+                 const data = await response.json();
+                 throw new Error(
+                     data.message || "Có lỗi xảy ra khi thêm vào giỏ hàng"
+                 );
+             }
+ 
+             notification.success({
+                 message: "Thành công",
+                 description: "Đã thêm sản phẩm vào giỏ hàng",
+                 duration: 4,
+                 placement: "bottomLeft",
+                 showProgress: true,
+                 pauseOnHover: true,
+             });
+ 
+             // Reset quantity sau khi thêm thành công
+             setQuantity(1);
+         } catch (error) {
+             console.error("Error adding to cart:", error);
+             notification.error({
+                 message: "Lỗi",
+                 description: error.message,
+                 duration: 4,
+                 placement: "bottomLeft",
+                 showProgress: true,
+                 pauseOnHover: true,
+             });
+         }
         }
+        else{
+            try {
+                const response = await fetch(`${API_URL}/api/Carts`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(cartItem),
+                });
+    
+                const data = await response.json();
+    
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || "Có lỗi xảy ra khi thêm vào giỏ hàng"
+                    );
+                }
+    
+                notification.success({
+                    message: "Thành công",
+                    description: "Đã thêm sản phẩm vào giỏ hàng",
+                    duration: 4,
+                    placement: "bottomRight",
+                    pauseOnHover: true,
+                });
+            } catch (error) {
+                console.error("Error adding to cart:", error);
+                notification.error({
+                    message: "Lỗi",
+                    description: error.message,
+                    duration: 4,
+                    placement: "bottomRight",
+                    pauseOnHover: true,
+                });
+            }
+        }
+        
     };
 
     const handleProductClick = (productId) => {
