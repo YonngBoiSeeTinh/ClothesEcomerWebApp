@@ -30,6 +30,12 @@
                 <data
                     android:scheme="GOSY"
                     android:host="payment-result" />
+
+                <data android:scheme="GOSY"
+                    android:host="www.GOSY.com" />
+
+                <data android:scheme="https"
+                    android:host="www.GOSY.com"/>
             </intent-filter>
 
         </activity> 
