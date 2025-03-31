@@ -33,58 +33,25 @@ const Register = ({ onRegisterSuccess }) => {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
+        console.log("register");
         e.preventDefault();
         setNameError("");
         setAccountNameError("");
-        //setGenderError("");
         setAddressError("");
         setphoneError("");
-        // setDayOfBirthError("");
         setEmailError("");
         setPasswordError("");
         setConfirmPasswordError("");
-
-        const userData = {
-            name,
-            accountName,
-            gender,
-            address,
-            phone,
-            dayOfBirth,
-            email,
-            password
-        };
-
+    
+    
         let isValid = true;
-
+    
         // Validation logic
         if (!name.trim()) {
             setNameError("Họ tên không được để trống.");
             isValid = false;
         }
-        if (!accountName.trim()) {
-            setAccountNameError("Tên tài khoản không được để trống.");
-            isValid = false;
-        }
-        // if (!gender) {
-        //     setGenderError("Vui lòng chọn giới tính.");
-        //     isValid = false;
-        // }
-        // if (!dayOfBirth) {
-        //     setDayOfBirthError("Ngày sinh không được để trống.");
-        //     isValid = false;
-        // }
-        else {
-            const selectedDate = new Date(dayOfBirth);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (selectedDate > today) {
-                setDayOfBirthError(
-                    "Ngày sinh không thể là ngày trong tương lai."
-                );
-                isValid = false;
-            }
-        }
+       
         if (!address.trim()) {
             setAddressError("Địa chỉ không được để trống.");
             isValid = false;
@@ -107,57 +74,44 @@ const Register = ({ onRegisterSuccess }) => {
             setConfirmPasswordError("Mật khẩu không khớp.");
             isValid = false;
         }
-
+    
         if (isValid) {
             try {
-
-                // Prepare user data to send to your server
                 const formData = new FormData();
                 formData.append("name", name);
                 formData.append("address", address);
                 formData.append("phone", phone);
-
-                // formData.append("accountName", accountName);
-                // formData.append("email", email);
-                // formData.append("password", password);
-
+                formData.append("role", 4);
+                formData.append("totalBuy", 0);
+                formData.append("account", 0);
                 if (userAvatar) {
-                    formData.append("userAvatar", userAvatar);
+                    formData.append("image", userAvatar);
+                }
+    
+                // Gửi yêu cầu tạo user
+                const response = await fetch(`${API_URL}/api/Users`, {
+                    method: "POST",
+                    body: formData,
+                });
+             
+                const data = await response.json()
+                console.log("response json", data);
+                if(response.status == 201){
+                    // Sau khi tạo user thành công, tạo account
+                const userId = data?.id; 
+                console.log('userId', userId);
+                await handelCreateAccount(userId);
+               
                 }
                 
-                
-                await axios.post(`${API_URL}/api/Users`, formData, {
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                });
-                
-
-                // notification.success({
-                //     message: 'Thành công',
-                //     description: 'Đăng ký thành công!',
-                //     duration: 4,
-                //     placement: "bottomRight",
-                //     pauseOnHover: true
-                // });
-                message.open({
-                    type: "success",
-                    content: "Đăng ký thành công!",
-                    duration: 4,
-                });
+    
                 onRegisterSuccess();
             } catch (error) {
                 console.error(
                     "Error during registration:",
                     error.response?.data || error.message
                 );
-                // notification.error({
-                //     message: 'Lỗi',
-                //     description: "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.",
-                //     duration: 4,
-                //     placement: "bottomRight",
-                //     pauseOnHover: true
-                // })
+                setEmailError( "email đã tồn tại");
                 message.open({
                     type: "error",
                     content:
@@ -167,17 +121,50 @@ const Register = ({ onRegisterSuccess }) => {
             }
         }
     };
-
+    
+    const handelCreateAccount = async (userId) => {
+        const account = {
+            email: email,
+            password: password,
+            userId: userId
+        };
+    
+        try {
+            await axios.post(`${API_URL}/api/Accounts`, account, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            console.log("Account created successfully.");
+            message.success("Đăng ký thành công!", 4);
+            onRegisterSuccess();
+        } catch (error) {
+            console.error("Error creating account:", error.response?.data || error.message);
+    
+            // Nếu tạo account thất bại, gọi API xóa user
+            try {
+                await axios.delete(`${API_URL}/api/Users/${userId}`);
+                console.log("User deleted due to account creation failure.");
+            } catch (deleteError) {
+                console.error("Failed to delete user:", deleteError.response?.data || deleteError.message);
+            }
+    
+            message.error("Đăng ký thất bại, vui lòng thử lại.", 4);
+        }
+    };
+    
+    
     // Modal handling functions
     const handleOk = () => {
-        setIsModalVisible(false);
-        navigate("/");
+        // setIsModalVisible(false);
+        // navigate("/");
     };
-
+    
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
+    
     return (
         <div className="flex items-center justify-center min-h-screen">
             <div className=" p-8 rounded-lg max-w-md w-full text-center">
@@ -198,46 +185,8 @@ const Register = ({ onRegisterSuccess }) => {
                             <p className="text-red-500">{nameError}</p>
                         )}
                     </div>
-                    <div>
-                        <label className="block text-left">Tên tài khoản</label>
-                        <input
-                            type="text"
-                            value={accountName}
-                            onChange={(e) => setAccountName(e.target.value)}
-                            placeholder="Nhập tên tài khoản"
-                            className="border rounded-md p-2 w-full"
-                        />
-                        {accountNameError && (
-                            <p className="text-red-500">{accountNameError}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-left">Giới tính</label>
-                        <select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            className="border rounded-md p-2 w-full"
-                        >
-                            <option value="">Chọn giới tính</option>
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                        </select>
-                        {genderError && (
-                            <p className="text-red-500">{genderError}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-left">Ngày sinh</label>
-                        <input
-                            type="date"
-                            value={dayOfBirth}
-                            onChange={(e) => setDayOfBirth(e.target.value)}
-                            className="border rounded-md p-2 w-full"
-                        />
-                        {dayOfBirthError && (
-                            <p className="text-red-500">{dayOfBirthError}</p>
-                        )}
-                    </div>
+                    
+                    
                     <div>
                         <label className="block text-left">Địa chỉ</label>
                         <input
@@ -315,21 +264,7 @@ const Register = ({ onRegisterSuccess }) => {
                             className="border rounded-md p-2 w-full"
                         />
                     </div>
-                    {/* <Form.Item
-                        label=<p className="block text-sm font-medium text-gray-700">Avatar</p>
-                        valuePropName="fileList"
-                        // getValueFromEvent={normFile}
-                    >
-                        <Upload action="/upload.do" listType="picture-card" accept="image/*" onChange={(e) => setUserAvatar(e.target.files[0])}>
-                            <button
-                                style={{ border: 0, background: "none" }}
-                                type="button"
-                            >
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                            </button>
-                        </Upload>
-                    </Form.Item> */}
+                    
 
                     <button
                         type="submit"

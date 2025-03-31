@@ -134,7 +134,7 @@ class ProductCard extends StatelessWidget {
              Padding(
                 padding: const EdgeInsets.only(top :2),
                 child: Text(
-              NumberFormat('###,###').format(product['price']),
+             '${ NumberFormat('###,###').format(product['price'])} đ',
                 style: const TextStyle(
                   fontSize: 13,
                   color: Color.fromARGB(255, 134, 135, 137),
@@ -172,7 +172,7 @@ class ProductCard extends StatelessWidget {
               children: [
                     product['promo'] > 0  ?
                         Text(
-                         NumberFormat('###,###').format(product['price'] -  product['promo']*0.01 * product['price']) ,
+                         '${NumberFormat('###,###').format(product['price'] -  product['promo']*0.01 * product['price'])} đ' ,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Color.fromARGB(255, 68, 72, 109),
@@ -180,7 +180,7 @@ class ProductCard extends StatelessWidget {
                         )
                      : 
                      Text(
-                      "${product['price'] ?? 0} VNĐ",
+                      "${product['price'] ?? 0} đ",
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color.fromARGB(255, 68, 72, 109),

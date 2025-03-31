@@ -73,6 +73,7 @@ Future<void> updateOrder() async {
 
     if (response.statusCode == 204) {
       if (selectedStatus == "Đã giao hàng") {
+       
         await updateUser(); 
       }
       showDialog(
@@ -137,6 +138,7 @@ Future<void> updateUser() async {
       request.fields['account'] = user['account'].toString();
       request.fields['createdAt'] = user['createdAt'];
       var response = await request.send();
+      print('Request fields: ${request.fields}');
       if (response.statusCode != 204) {
         showErrorDialog('Cập nhật user thất bại!');
         print('Response user Failed to update user: ${response.statusCode}');
@@ -183,7 +185,7 @@ void showErrorDialog(String message) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        title: Text("Update Order" ,style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),),
+        title: Text("Cập nhật đơn hàng" ,style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),),
         backgroundColor: Color(0xFF4C53A5),
          iconTheme: IconThemeData(
           color: Colors.white,
@@ -200,22 +202,22 @@ void showErrorDialog(String message) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Customer Name: ${order['name'] ?? 'N/A'}",
+                "Tên khách hàng: ${order['name'] ?? 'N/A'}",
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 8),
               Text(
-                "Address: ${order['address'] ?? 'N/A'}",
+                "Địa chỉ: ${order['address'] ?? 'N/A'}",
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 8),
               Text(
-                "Phone: ${order['phone'] ?? 'N/A'}",
+                "Số điện thoại: ${order['phone'] ?? 'N/A'}",
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 16),
               Text(
-                "Product List:",
+                "Danh sách sản phẩm:",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
               ),
               SizedBox(height: 8),
@@ -245,7 +247,7 @@ void showErrorDialog(String message) {
                           style: TextStyle(fontSize: 18),
                         ),
                         Text(
-                          "$formattedPrice VND",
+                          "$formattedPrice đ",
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -256,12 +258,12 @@ void showErrorDialog(String message) {
               SizedBox(height: 16),
               Divider(color: Color.fromARGB(255, 75, 83, 174)),
               Text(
-                "Total Price: ${order['totalPrice'] ?? '0'} VND",
+                "Total Price: ${order['totalPrice'] ?? '0'} đ",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
               ),
               SizedBox(height: 16),
               Text(
-                "Update Status:",
+                "Cập nhật trạng thái:",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               SizedBox(height: 8),
@@ -320,7 +322,7 @@ void showErrorDialog(String message) {
                             ),
                             child: Center(
                               child: Text(
-                                "Update",
+                                "Cập nhật",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,

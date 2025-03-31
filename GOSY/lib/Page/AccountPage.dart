@@ -7,6 +7,7 @@ import 'package:GOSY/UserProvider.dart';
 import 'package:GOSY/Widget/CancelOrderWiget.dart';
 import 'package:GOSY/Widget/OrderDetailWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,7 +47,7 @@ class _AccountWidgetState extends State<AccountWidget> {
         setState(() {
            account = jsonDecode(response.body).firstWhere((ac)=>ac['userId'] == id);
         });
-        print('response.body ${response.body}');
+    
       } else {
         throw Exception("Failed to fetch user: ${response.statusCode}");
       }
@@ -71,7 +72,7 @@ class _AccountWidgetState extends State<AccountWidget> {
               return dateB.compareTo(dateA);
             });
           });
-           print('order detail at respone :${orderDetails} ');
+         
         } else {
           print('Failed to load categories: ${response.statusCode}');
         }
@@ -85,7 +86,7 @@ class _AccountWidgetState extends State<AccountWidget> {
     }
  
   void _showOrderDetails(Map<String, dynamic> order) {
-     print('order detail :${orderDetails} ');
+   
     showDialog(
       context: context,
       builder: (context) {
@@ -162,10 +163,7 @@ class _AccountWidgetState extends State<AccountWidget> {
     await  userProvider.loadSavedLogin();
 
     if (userProvider.user == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => WelcomePage()),
-      );
+      context.push('/welcomePage');
     }else{
       fetchUserAccount(userProvider.user?['id']);
       setState(() {
@@ -201,7 +199,7 @@ class _AccountWidgetState extends State<AccountWidget> {
           children: [
              InkWell(
               onTap: () {
-              Navigator.pushNamed(context, '/');
+             context.go('/');;
               },
               child: Icon(
                 Icons.arrow_back, 
@@ -260,7 +258,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                         base64Decode(user?['image']),
                         fit: BoxFit.cover,
                       )
-                    : Icon(Icons.account_circle, size: 150),
+                    : Center(child: Icon(Icons.account_circle, size: 170)),
               ),
                 
               ),
@@ -283,10 +281,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                   children: [
                     InkWell(
                       onTap: (){
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
-                        );
+                       context.push('/profile');
                       },
                       child: Container(
                         width: 90,
@@ -305,10 +300,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                       child: InkWell(
                       onTap: (){
                         userProvider.logout();
-                         Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => WelcomePage()),
-                        );
+                        context.push('/welcomePage');
                       },
                       child: Container(
                         width: 90,
@@ -390,7 +382,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                               style:TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color:order['status'] == 'Đã giao hàng' ? 
+                                color:order['status'] == 'Đã thanh toán' ? 
                                 const Color.fromARGB(255, 32, 112, 187) :
                                 order['status'] == 'Đã xác nhận' ? 
                                 const Color.fromARGB(255, 70, 183, 74) :  
@@ -403,13 +395,13 @@ class _AccountWidgetState extends State<AccountWidget> {
                           SizedBox(height: 8,),
                           InkWell(
                             onTap: (){
-                              if(order['status']  == "Đã xác nhận"){
+                              if(order['status']  == "Đã xác nhận" || order['status']  == "Đã giao hàng"){
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('Đơn hàng đã xác nhận, không thể hủy !')),
                                     );
                               }
                               else if(order['status']  == "Đã hủy"){
-                                  SnackBar(content: Text('Đơn hàng đã xác nhận, không thể hủy !'));
+                                  SnackBar(content: Text('Đơn hàng đã hủy !'));
                               }
                               else{
                                 _showCancleOrder(order);

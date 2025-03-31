@@ -407,7 +407,11 @@ const UserManagement = () => {
                                             Đã mua
                                         </Typography>
                                         <Typography className="value">
-                                            {selectedUser.totalBuy || ""} VNĐ
+                                        {new Intl.NumberFormat("vi-VN", {
+                                            style: "currency", 
+                                            currency: "VND",
+                                        }).format(selectedUser.totalBuy)}
+                                          
                                         </Typography>
                                     </Box>
 

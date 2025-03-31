@@ -57,14 +57,14 @@ class _ProductHomepageState extends State<ProductHomepage> {
                                   child: TextFormField(
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Search here",
+                                      hintText: "Tìm kiếm",
                                       icon: Icon(Icons.search),
                                     ),
                                     onFieldSubmitted: (value) {
                                       setState(() {
                                         searchFilter = value;
                                       });
-                                      print("Search filter: $searchFilter");
+                                    
                                     },
                                   ),
                                 ),
@@ -78,7 +78,7 @@ class _ProductHomepageState extends State<ProductHomepage> {
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                             child: Text(
-                              "Best seller",
+                              "Bán chạy",
                               style: TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class _ProductHomepageState extends State<ProductHomepage> {
                           ),
                           (searchFilter == null || searchFilter!.isEmpty)
                             ? ItemWidget(products: widget.products,)
-                            : SizedBox(height: 700, child: SearchItemWidget(filter: searchFilter)),
+                            : SizedBox(height: 700, child: SearchItemWidget(filter: searchFilter, products: widget.products,)),
                         ],
                       ),
                     ),

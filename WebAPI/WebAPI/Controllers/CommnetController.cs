@@ -52,6 +52,20 @@ namespace WebAPI.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+        [HttpGet("User/{userId}")]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByUser(int userId)
+        {
+            try
+            {
+                var comments = await _commentRepository.GetAllAsync();
+                var userComments = comments.Where(c => c.UserId == userId).ToList();
+                return Ok(userComments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error retrieving user comments: " + ex.Message });
+            }
+        }
         // PUT: api/Comment/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutComment(int id, Comment Comment)

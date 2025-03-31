@@ -43,8 +43,6 @@ const EditOrder = () => {
     const paymentMethodOptions = [
         "Tiền mặt",
         "MoMo",
-        "VNPay",
-        "Chuyển khoản ngân hàng",
     ];
 
     // Thêm hàm để format ngày giờ cho input datetime-local
@@ -278,11 +276,11 @@ const EditOrder = () => {
                 formData.append("account", user.account);
                 if (totalPrice <= 1500000)
                      { formData.append("role", 4);}
-                else  if (totalPrice > 1500000)
+                else  if (totalPrice > 1500000 && totalPrice < 3500000)
                     { formData.append("role", 5);}
-                else  if (totalPrice > 3500000)
+                else  if (totalPrice >= 3500000 && totalPrice < 7000000)
                     { formData.append("role", 6);}
-                else  if (totalPrice > 700000)
+                else  if (totalPrice >= 7000000 )
                     { formData.append("role", 7);}
 
                 console.log("📝 FormData nội dung:");

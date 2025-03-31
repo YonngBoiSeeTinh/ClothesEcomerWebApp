@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OrderDetail extends StatefulWidget {
   final List<dynamic> orders; 
@@ -44,6 +45,18 @@ class _OrderDetailState extends State<OrderDetail> {
         ),
       );
     }
+    String formatDate(String? createdAt) {
+      if (createdAt == null || createdAt.isEmpty) {
+        return 'N/A';
+      }
+      try {
+        DateTime parsedDate = DateTime.parse(createdAt);
+        return DateFormat('dd/MM/yyyy').format(parsedDate);
+      } catch (e) {
+        print('Error parsing date: $e');
+        return 'N/A';
+      }
+    }
 
         return 
           SizedBox(
@@ -53,22 +66,27 @@ class _OrderDetailState extends State<OrderDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Customer Name: ${order['name'] ?? 'N/A'}",
+                    "Tên khách hàng: ${order['name'] ?? 'N/A'}",
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Address: ${order['address'] ?? 'N/A'}",
+                    "Ngày đặt: ${formatDate(order['createdAt'])} ",
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Phone: ${order['phone'] ?? 'N/A'}",
+                    "Địa chỉ: ${order['address'] ?? 'N/A'}",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Số điện thoại: ${order['phone'] ?? 'N/A'}",
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 16),
                   Text(
-                    "Product List:",
+                    "Danh sách sản phẩm:",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
                   ),
                   SizedBox(height: 8),
@@ -96,7 +114,7 @@ class _OrderDetailState extends State<OrderDetail> {
                               style: TextStyle(fontSize: 18),
                             ),
                             Text(
-                              "$formattedPrice VND",
+                              "$formattedPrice đ",
                               style: TextStyle(fontSize: 18),
                             ),
                           ],
@@ -107,7 +125,7 @@ class _OrderDetailState extends State<OrderDetail> {
                   SizedBox(height: 16),
                   Divider(color: Color.fromARGB(255, 75, 83, 174)),
                   Text(
-                    "Total Price: ${order['totalPrice'] ?? '0'} VND",
+                    "Tổng cộng: ${order['totalPrice'] ?? '0'} VND",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                 ],

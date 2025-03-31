@@ -32,6 +32,7 @@ class _CategorywidgettState extends State<Categorywidget> {
               }
 
               return Container(
+                width: 120,
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 10),

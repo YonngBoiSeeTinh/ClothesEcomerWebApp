@@ -10,18 +10,19 @@ import 'dart:convert';
 
 class SearchItemWidget extends StatefulWidget {
   final  String? filter;
-  const SearchItemWidget({super.key, required this.filter});
+   final List<dynamic> products ;
+  const SearchItemWidget({super.key, required this.filter, required this.products});
   @override
   _ItemWidgetState createState() => _ItemWidgetState();
 }
 
 class _ItemWidgetState extends State<SearchItemWidget> {
-  List<dynamic> products = [];
+ 
   List<dynamic> filteredProducts = [];
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    filterProducts();
   }
   @override
   void didUpdateWidget(SearchItemWidget oldWidget) {
@@ -32,30 +33,13 @@ class _ItemWidgetState extends State<SearchItemWidget> {
   }
   void filterProducts() {
     setState(() {
-      filteredProducts = products.where((item) {
+      filteredProducts = widget.products.where((item) {
         final name = item['name']?.toString().toLowerCase() ?? '';
         return name.contains(widget.filter?.toLowerCase() ?? '');
       }).toList();
     });
   }
-  Future<void> fetchProducts() async {
-    try {
-      final response =
-          await http.get(Uri.parse('${ApiConfig.baseUrl}/api/Products'));
-       
-      if (response.statusCode == 200) {
-        setState(() {
-          products = jsonDecode(response.body);
-          filterProducts();
-        });
-      } else {
-        print('Failed to load products: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return  filteredProducts.isEmpty
@@ -68,7 +52,7 @@ class _ItemWidgetState extends State<SearchItemWidget> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 0.7,
+                  childAspectRatio: 0.67,
                 ),
                 itemCount: filteredProducts.length,
                 itemBuilder: (context, index) {
@@ -166,7 +150,7 @@ class ProductCard extends StatelessWidget {
              Padding(
                 padding: const EdgeInsets.only(top :2),
                 child: Text(
-                "${product['price'] ?? 0} VNĐ",
+                "${product['price'] ?? 0} đ",
                 style: const TextStyle(
                   fontSize: 13,
                   color: Color.fromARGB(255, 134, 135, 137),
@@ -203,7 +187,7 @@ class ProductCard extends StatelessWidget {
               children: [
                     product['promo'] > 0  ?
                         Text(
-                          "${product['price'] -  product['promo']*0.01 * product['price'] ?? 0} VNĐ",
+                          "${product['price'] -  product['promo']*0.01 * product['price'] ?? 0} đ",
                           style: const TextStyle(
                             fontSize: 16,
                             color: Color.fromARGB(255, 68, 72, 109),
@@ -211,7 +195,7 @@ class ProductCard extends StatelessWidget {
                         )
                      : 
                      Text(
-                      "${product['price'] ?? 0} VNĐ",
+                      "${product['price'] ?? 0} đ",
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color.fromARGB(255, 68, 72, 109),

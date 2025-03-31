@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../AppConfig.dart';
 import '../Widget/Alter.dart';
@@ -58,6 +59,11 @@ class _OrderManagerState extends State<OrderManager> {
       if (response.statusCode == 200) {
         setState(() {
           orders = jsonDecode(response.body);
+           orders.sort((a, b) {
+            DateTime dateA = DateTime.parse(a['createdAt']);
+            DateTime dateB = DateTime.parse(b['createdAt']);
+            return dateB.compareTo(dateA); // Sắp xếp giảm dần (mới nhất ở đầu)
+          });
         });
       } else {
         print('Failed to load categories: ${response.statusCode}');
@@ -121,7 +127,7 @@ class _OrderManagerState extends State<OrderManager> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white, 
-          title: Text("Order Details",
+          title: Text("Chi tiết đơn hàng",
                   style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -200,7 +206,7 @@ class _OrderManagerState extends State<OrderManager> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Total: ${order['totalPrice']} VND',
+                        'Tổng tiền: ${ NumberFormat('###,###').format( order['totalPrice'])} đ',
                         style: TextStyle(fontSize: 16, color: Color(0xFF4C53A5)),
                       ),
                     ],

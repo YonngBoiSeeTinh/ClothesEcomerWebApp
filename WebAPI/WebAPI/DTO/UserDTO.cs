@@ -18,9 +18,6 @@ public class UserDTO
     public int? Account { get; set; }
     public DateTime? CreatedAt { get; set; }
 
-    [JsonIgnore]
-    public DateTime? DateofBirth { get; set; }
-
-    //public string DateofBirthFormatted => DateofBirth?.ToString("dd-MM-yyyy");
+   
 }
 

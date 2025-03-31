@@ -2,6 +2,7 @@ import 'package:GOSY/Page/HomePage.dart';
 import 'package:GOSY/Page/LoginPage.dart';
 import 'package:GOSY/Page/SignUpPage.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
  
 
@@ -36,7 +37,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ],
             color: Colors.white),
         child: Text(
-          'Login',
+          'Đăng nhập',
           style: TextStyle(fontSize: 20, color:  Color(0xFF4C53A5)),
         ),
       ),
@@ -58,7 +59,7 @@ class _WelcomePageState extends State<WelcomePage> {
           border: Border.all(color: Colors.white, width: 2),
         ),
         child: Text(
-          'Register now',
+          'Đăng ký ngay',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
@@ -71,7 +72,7 @@ class _WelcomePageState extends State<WelcomePage> {
         child: Column(
           children: <Widget>[
             Text(
-              'Quick login with Touch ID',
+              'Đăng nhập nhanh với Touch ID',
               style: TextStyle(color: Colors.white, fontSize: 17),
             ),
             SizedBox(
@@ -119,7 +120,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget _backButton() {
     return InkWell(
       onTap: () {
-         Navigator.pushNamed(context, '/');
+         context.go('/');
       },child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

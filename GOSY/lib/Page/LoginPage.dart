@@ -1,6 +1,7 @@
 import 'package:GOSY/Page/SignUpPage.dart';
 import 'package:GOSY/UserProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
  
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Đăng nhập thành công!')),
         );
-        Navigator.pushReplacementNamed(context, '/'); 
+        context.go('/account'); 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Email hoặc mật khẩu không chính xác !')),
@@ -132,8 +133,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _createAccountLabel() {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignupPage()));
+        
+           context.go('/signUp');
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 20),

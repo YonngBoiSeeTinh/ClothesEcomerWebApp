@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:GOSY/Page/AccountPage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:GOSY/AppConfig.dart';
 import 'package:GOSY/Page/welcomePage.dart';
@@ -55,10 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await userProvider.loadSavedLogin();
     if (userProvider.user == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => WelcomePage()),
-      );
+      context.push('/welcomePage');
     } else {
       fetchUserAccount(userProvider.user?['id']);
       setState(() {
@@ -107,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Cập nhật thông tin thành công!')),
         ); 
-        Navigator.pushNamed(context, '/account');
+        context.go('/account');
       } else {
         var responseBody = await response.stream.bytesToString();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -144,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/account');
+             context.go('/');
             },
             child: Icon(
               Icons.arrow_back,

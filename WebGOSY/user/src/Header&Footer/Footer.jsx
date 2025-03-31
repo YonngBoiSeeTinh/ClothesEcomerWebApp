@@ -144,7 +144,7 @@ const Footer = () => {
                                             <InstagramOutlined className="text-3xl hover:text-primary duration-300" />
                                         </Link>
                                         <Link
-                                            to="https://www.facebook.com/ThePinkKitten"
+                                            to="https://www.facebook.com/lamnguyen.10082004"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >

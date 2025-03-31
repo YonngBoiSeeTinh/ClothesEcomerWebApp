@@ -89,14 +89,14 @@ class _PromowidgetState extends State<Promowidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                '25% Off',
+                'Giảm 25%',
                 style: TextStyle(
                   color: Color.fromARGB(255, 138, 143, 213),
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   shadows: [
                     Shadow(
-                      offset: Offset(0, 4),
+                      offset: Offset(0, 3),
                       blurRadius: 3,
                       color: Color.fromARGB(255, 28, 34, 99),
                     ),
@@ -105,20 +105,20 @@ class _PromowidgetState extends State<Promowidget> {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Sep 10 - Sep 17',
+                '8/3 - 30/4',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 20,
                   shadows: [
                     Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 2,
+                      offset: Offset(0, 2),
+                      blurRadius: 1,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 22),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -141,7 +141,7 @@ class _PromowidgetState extends State<Promowidget> {
                   ),
                 ),
                 child: const Text(
-                  'Grab Now',
+                  'Mua ngay',
                   style: TextStyle(
                     color: Color(0xFF4C53A5),
                   ),

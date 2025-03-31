@@ -69,10 +69,11 @@ class _ChoosePromoWidetState extends State<ChoosePromoWidet> {
       await  userProvider.loadSavedLogin();
       dynamic user = userProvider.user;
       dynamic memberPromo;
-      if(user != null){
-        final today = DateTime.now();
+      if(user != null ){
+        if (  user['role'] != 1 && user['role']!=2  && user['role'] != 3 && user['role']!=4){
+          final today = DateTime.now();
         final tomorrow = today.add(Duration(days: 1));
-        if(user['role'] == 5){
+        if(user['role'] == 5 ){
           memberPromo = {
             'id' : 99999,
             'name': 'Thành viên Bạc',
@@ -105,6 +106,8 @@ class _ChoosePromoWidetState extends State<ChoosePromoWidet> {
         setState(() {
           promotions.add(memberPromo);
         });
+        }
+        
       }
       
   }

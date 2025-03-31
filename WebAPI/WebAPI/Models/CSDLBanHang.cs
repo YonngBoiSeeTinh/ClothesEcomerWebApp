@@ -63,9 +63,7 @@ public partial class CSDLBanHang : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-            entity.Property(e => e.Username)
-                .HasColumnName("username")
-                .HasMaxLength(20);
+           
         });
 
         modelBuilder.Entity<Cart>(entity =>

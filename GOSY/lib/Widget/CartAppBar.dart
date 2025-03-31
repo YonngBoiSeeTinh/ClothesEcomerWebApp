@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 class CartAppbar extends StatelessWidget {
   const CartAppbar({super.key});
@@ -14,7 +15,7 @@ class CartAppbar extends StatelessWidget {
           children: [
              InkWell(
               onTap: () {
-              Navigator.pop(context);
+                context.go('/');
               },
               child: Icon(
                 Icons.arrow_back, 

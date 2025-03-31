@@ -85,7 +85,7 @@ Future<void> fetchUsers() async {
         final orderDate = DateTime.parse(order['createdAt']);
         String status = order['status'];
 
-         if (status == 'Đã giao hàng' &&
+         if (status == "Đã giao hàng" &&
             orderDate.year == now.year &&
             orderDate.month == now.month &&
             orderDate.day == now.day) {

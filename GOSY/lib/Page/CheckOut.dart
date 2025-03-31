@@ -9,6 +9,7 @@ import 'package:GOSY/Widget/ChoosePromoWidget.dart';
 import 'package:GOSY/Widget/ItemWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class CheckoutPage extends StatefulWidget {
-   List<dynamic> selectedCarts = [];
+  List<dynamic> selectedCarts = [];
   List<dynamic> products = [];
    double total; 
    CheckoutPage({super.key, required this.selectedCarts, required this.total, required this.products});
@@ -82,9 +83,12 @@ Future<void> redirectToPayment(String payUrl) async {
 }
 Future<void> saveOrderToSharedPreferences(dynamic order) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String orderJson = jsonEncode(order);
-  print('order shared ${orderJson}');
-  await prefs.setString('order', orderJson);
+  
+  await prefs.setString('total', widget.total.toString());
+  print('total shared ${widget.total.toString()}');
+  String cartJson = jsonEncode(widget.selectedCarts);
+  print('cart shared ${cartJson}');
+  await prefs.setString('cart', cartJson);
 }
 Future<void> addOrder() async {
   dynamic order = {
@@ -186,7 +190,7 @@ Future<void> addOrder() async {
         SnackBar(content: Text('Đơn hàng đã được tạo thành công, vui lòng đợi')),
       );
     
-      Navigator.pushNamed(context, '/account');
+      context.go('/account');
     } else {
       print('Failed to add order: ${response.statusCode}');
       SnackBar(content: Text('Tạo đơn hàng bị lỗi, vui lòng thử lại'));

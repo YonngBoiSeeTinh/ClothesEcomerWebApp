@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
@@ -40,17 +41,6 @@ class HomeAppBar extends StatelessWidget {
               )
           ),
           Spacer(),
-          InkWell(
-            onTap: (){
-              Navigator.pushNamed(context, '/cartPage');
-            },
-            child: Icon(Icons.shopping_bag_outlined,
-                     
-              size: 33,
-              color: Color(0xFF4C53A5),
-            ),
-          ),
-         
           
         ],
       ),

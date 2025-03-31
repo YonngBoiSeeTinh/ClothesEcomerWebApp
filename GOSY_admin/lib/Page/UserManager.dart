@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../AppConfig.dart';
 
@@ -95,7 +96,7 @@ class _UserManagerState extends State<UserManager> {
               SizedBox(height: 8),
               Text("Số điện thoại: ${user['phone']}", style: TextStyle(fontSize: 18)),
               SizedBox(height: 8),
-              Text("Đã chi: ${user['totalBuy']} VNĐ", style: TextStyle(fontSize: 18)),
+              Text("Đã chi: ${ NumberFormat('###,###').format( user['totalBuy'])} đ", style: TextStyle(fontSize: 18)),
               
             ],
           ),
@@ -155,9 +156,16 @@ class _UserManagerState extends State<UserManager> {
                               borderRadius: BorderRadius.circular(100)
                             ),
                         child: user?['image'] != null
-                            ? Image.memory(
-                                base64Decode(user['image']),
-                                height: 40,
+                            ? SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: ClipOval(
+                                child: Image.memory(
+                                    base64Decode(user['image']),
+                                    fit: BoxFit.cover,
+                                    height: 40,
+                                ),
+                              ),
                             )
                           : Container(
                               child: Icon(Icons.account_circle_rounded, size: 35,),
@@ -169,7 +177,7 @@ class _UserManagerState extends State<UserManager> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 160,
+                          width: 140,
                           child: Text(
                             user['name'],
                             maxLines: 1,
