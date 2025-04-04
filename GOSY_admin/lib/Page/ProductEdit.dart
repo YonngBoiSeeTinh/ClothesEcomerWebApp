@@ -31,7 +31,7 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
   @override
   void initState() {
     super.initState();
-   
+    nameController.text = widget.product?['name'] ?? '';
     unitController.text = widget.product?['unit'] ?? '';
     promoController.text = widget.product?['promo']?.toString() ?? '';
     priceController.text = widget.product?['price']?.toString() ?? '';
@@ -71,12 +71,12 @@ class _ProductUpdatePageState extends State<ProductUpdatePage> {
   // Thêm các trường văn bản
   request.fields['name'] = nameController.text;
   request.fields['promo'] = promoController.text;
-  request.fields['startRate'] =widget.product?['startRate'] ;
+  request.fields['startRate'] = widget.product?['startRate'].toString() ?? '0' ;
   request.fields['unit'] = unitController.text;
   request.fields['createdAt'] = widget.product?['createdAt'] ?? '';
   request.fields['brand'] = widget.product?['brand'] ?? '';
   request.fields['price'] = priceController.text;
-  request.fields['sold'] =widget.product?['sold'] ?? '';
+  request.fields['sold'] =widget.product?['sold'].toString() ?? '0' ;
   request.fields['description'] = descriptionController.text;
   request.fields['categoryId'] = selectedCategoryId ?? '';
 

@@ -95,7 +95,7 @@ class _AccountWidgetState extends State<AccountWidget> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Chi tiết đơn hàng",
+              Text("Chi tiết đơn hàng  #${order['id']}",
                       style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -214,7 +214,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                     RichText(
                     textAlign: TextAlign.start,
                     text: TextSpan(
-                          text: 'Profile',
+                          text: 'Tài khoản',
                           style: GoogleFonts.portLligatSans(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
@@ -226,11 +226,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                   ],
                 ),
               ),
-              Spacer(),
-               Icon(
-                Icons.shopping_cart, 
-                size: 30,
-                color: Color(0xFF4C53A5)),
+            
           ]
          ),
     );

@@ -37,18 +37,15 @@ class CartAppbar extends StatelessWidget {
                           ),
                         ),
                     ),
-                    Icon(Icons.shopping_bag_outlined,
-                    size: 33,
-                    color: Color(0xFF4C53A5),
-                  ),
+                    
                   ],
                 ),
               ),
               Spacer(),
-               Icon(
-                Icons.more_vert, 
-                size: 30,
-                color: Color(0xFF4C53A5)),
+                Icon(Icons.shopping_bag_outlined,
+                        size: 33,
+                        color: Color(0xFF4C53A5),
+                ),
           ]
          ),
     );

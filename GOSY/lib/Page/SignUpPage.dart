@@ -75,7 +75,7 @@ class _SignupPageState extends State<SignupPage> {
         request.fields['phone'] = phone;
         request.fields['totalBuy'] = "0";
         request.fields['account'] = "0";
-        request.fields['role'] = "1";
+        request.fields['role'] = "4";
 
         var response = await request.send();
 

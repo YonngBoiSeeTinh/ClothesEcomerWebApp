@@ -42,7 +42,6 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           account = jsonDecode(response.body).firstWhere((ac) => ac['userId'] == id);
         });
-       
       } else {
         throw Exception("Failed to fetch user: ${response.statusCode}");
       }
@@ -67,7 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
       addressController.text = userProvider.user?['address'] ?? '';
     }
   }
-  //
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -89,7 +87,6 @@ class _ProfilePageState extends State<ProfilePage> {
       request.fields['createdAt'] = user?['createdAt'] ?? '';
       request.fields['totalBuy'] = user?['totalBuy'].toString() ?? '';
       request.fields['role'] = user?['role'].toString() ?? '';
-    // request.fields['dateofBorth'] =  user?['dateofBorth'] ;
 
       if (imageFile != null) {
         var multipartFile = await http.MultipartFile.fromPath(
@@ -104,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response.statusCode == 204) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Cập nhật thông tin thành công!')),
-        ); 
+        );
         context.go('/account');
       } else {
         var responseBody = await response.stream.bytesToString();
@@ -121,13 +118,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          labelStyle: TextStyle(color: Color(0xFF4C53A5)), // Màu sắc cho label
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Color(0xFF4C53A5), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Color(0xFF4C53A5), width: 2),
+          ),
         ),
       ),
     );
@@ -136,13 +144,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget builtProfileAppBar() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       height: 90,
       child: Row(
         children: [
           InkWell(
             onTap: () {
-             context.go('/');
+              context.go('/');
             },
             child: Icon(
               Icons.arrow_back,
@@ -150,12 +158,12 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Color(0xFF4C53A5),
             ),
           ),
-          SizedBox(width: 30),
+          SizedBox(width: 20),
           Text(
             'Cập nhật thông tin',
             style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
               color: Color(0xFF4C53A5),
             ),
           ),
@@ -166,46 +174,40 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget builtProfileAvatar() {
     return Container(
-      height: 222,
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: 175,
-            height: 175, 
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: imageFile != null
-                ? ClipOval(child: Image.file(imageFile!, fit: BoxFit.cover))
-                : user!= null && user?['image'] != null?
-                  ClipOval(child: Image.memory(base64Decode(user?['image']), fit: BoxFit.cover))
-                : Icon(Icons.account_circle, size: 180),
-          ),
-          SizedBox(height: 8),
-          InkWell(
-            onTap: _pickImage,
-            child: Container(
-              width: 120,
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFF4C53A5)),
-                color: Color(0xFF6C72BC),
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Color(0xFF4C53A5), width: 4),
+                ),
+                child: imageFile != null
+                    ? ClipOval(child: Image.file(imageFile!, fit: BoxFit.cover))
+                    : user != null && user?['image'] != null
+                        ? ClipOval(child: Image.memory(base64Decode(user?['image']), fit: BoxFit.cover))
+                        : Icon(Icons.account_circle, size: 150, color: Color(0xFF4C53A5)),
               ),
-              child: Center(
-                child: Text(
-                  'Chọn ảnh',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+              InkWell(
+                onTap: _pickImage,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF4C53A5),
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  child: Icon(Icons.camera_alt, color: Colors.white, size: 24),
                 ),
               ),
-            ),
+            ],
           ),
+          SizedBox(height: 40),
         ],
       ),
     );
@@ -220,28 +222,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   builtProfileAppBar(),
                   Container(
-                     height: MediaQuery.of(context).size.height,
-                    decoration:BoxDecoration (
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
                       color: Color(0xFFEDECF2),
-                      borderRadius: BorderRadius.only(topLeft:Radius.circular(30) , topRight: Radius.circular(30) ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
                     ),
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                         builtProfileAvatar(),
+                        builtProfileAvatar(),
                         _buildTextField('Họ và tên', nameController),
                         _buildTextField('Số điện thoại', phoneController, keyboardType: TextInputType.phone),
                         _buildTextField('Địa chỉ', addressController),
-                        SizedBox(height: 20),
+                        SizedBox(height: 60),
                         InkWell(
                           onTap: updateUser,
                           child: Container(
-                            width: 200,
-                            padding: EdgeInsets.all(8),
+                            width: double.infinity,
+                            padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Color(0xFF4C53A5)),
-                              color: Color(0xFF6C72BC),
+                              color: Color(0xFF4C53A5),
                             ),
                             child: Center(
                               child: Text(
@@ -254,7 +257,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                       
                       ],
                     ),
                   ),

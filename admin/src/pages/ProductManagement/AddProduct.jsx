@@ -14,7 +14,7 @@ const API_URL = apiConfigInstance.getApiUrl();
 import { MenuItem } from "@mui/material";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import Detail from "../../components/Detail.jsx";
+
 import { message, notification } from "antd";
 const AddProduct = () => {
     const navigate = useNavigate();
@@ -45,21 +45,7 @@ const AddProduct = () => {
         description: "",
         image: null,
     });
-    const [detail, setDetail] = useState({
-        screenSize: "",
-        screenTechnology: " ",
-        rearCamera: "",
-        frontCamera: "",
-        chipset: "",
-        gpu: "",
-        nfc: "",
-        ram: "",
-        internalStorage: "",
-        battery: "",
-        simcard: "",
-        screenResolution: "",
-        chargingTechnology: "",
-    });
+   
     const [imagePreview, setImagePreview] = useState(null); // Thêm state để lưu URL hình ảnh
 
     // Thêm state cho validation errors
@@ -284,24 +270,8 @@ const AddProduct = () => {
                         />
                     </Grid>
 
-                    {/* Thêm thông tin cấu hình */}
-                    <Grid item xs={12}>
-                        <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>
-                            Cấu hình sản phẩm
-                        </Typography>
-                    </Grid>
-                    {Object.keys(detail).map((key) => (
-                        <Grid item xs={12} sm={6} key={key}>
-                            <TextField
-                                label={key}
-                                name={key}
-                                value={detail[key]}
-                                onChange={handleDetailChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                        </Grid>
-                    ))}
+                
+                   
                 </Grid>
 
                 <Box mt={3}>

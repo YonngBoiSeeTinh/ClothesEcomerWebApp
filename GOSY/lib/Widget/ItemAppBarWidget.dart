@@ -28,9 +28,9 @@ class Itemappbarwidget extends StatelessWidget {
                     RichText(
                     textAlign: TextAlign.start,
                     text: TextSpan(
-                          text: 'Product Detail',
-                          style: GoogleFonts.portLligatSans(
-                            fontSize: 30,
+                          text: 'Chi tiết sản phẩm',
+                          style: TextStyle(
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF4C53A5),
                           ),
@@ -41,9 +41,7 @@ class Itemappbarwidget extends StatelessWidget {
                 ),
               ),
               Spacer(),
-               Icon(Icons.favorite_border,
-                  color: Colors.red,),
-                  
+               
                Icon(
                 Icons.more_vert, 
                 size: 30,

@@ -6,7 +6,8 @@ import 'dart:convert';
 
 class Categorywidget extends StatefulWidget {
  final List<dynamic> categories ;
-  const Categorywidget({super.key, required this.categories});
+ final Function(int) setCateId; 
+  const Categorywidget({super.key, required this.categories, required this.setCateId});
   @override
   _CategorywidgettState createState() => _CategorywidgettState();
 }
@@ -31,39 +32,44 @@ class _CategorywidgettState extends State<Categorywidget> {
                 }
               }
 
-              return Container(
-                width: 120,
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // imageBytes != null
-                    //     ? Image.memory(
-                    //         imageBytes,
-                    //         width: 40,
-                    //         height: 40,
-                    //       )
-                    //     : Container(
-                    //         width: 40,
-                    //         height: 40,
-                    //         color: Colors.blueGrey,
-                    //       ),
-                    const SizedBox(width: 8), // Khoảng cách giữa ảnh và văn bản
-                    Text(
-                      category['name'] ?? 'Unknown',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF4C53A5),
-                        fontWeight: FontWeight.w400,
+              return InkWell(
+                onTap: (){
+                  widget.setCateId(category['id']);
+                },
+                child: Container(
+                  width: 150,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      imageBytes != null
+                          ? Image.memory(
+                              imageBytes,
+                              width: 40,
+                              height: 40,
+                            )
+                          : Container(
+                              width: 40,
+                              height: 40,
+                              color: Colors.blueGrey,
+                            ),
+                      const SizedBox(width: 8), // Khoảng cách giữa ảnh và văn bản
+                      Text(
+                        category['name'] ?? 'Unknown',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF4C53A5),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

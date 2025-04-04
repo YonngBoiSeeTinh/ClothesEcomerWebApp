@@ -271,6 +271,7 @@ class _CartpageState extends State<Cartpage> {
                       ),
                     ),
                     //infor cart
+                 
                     Container(
                       width: 130,
                       padding: EdgeInsets.symmetric(vertical: 10),
@@ -300,83 +301,86 @@ class _CartpageState extends State<Cartpage> {
                             ],
                       ),   
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                                '${colorSize?['color']} - Size ${colorSize['size']}'
-                                ,
-                                    maxLines: 1, 
-                                overflow: TextOverflow.ellipsis, 
-                              style:TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                  color: Color.fromARGB(255, 63, 63, 65),
-                                )
-                        ), 
-                         Container(
-                                  width: 120,
-                                  height: 40,
-                                  child: Row( 
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.end, 
-                                    children: [
-                                      InkWell(
-                                        onTap: (){updateQuantity("minus", cart, cart['quantity']);},
-                                        child: Container(
-                                          padding: EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(20),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.blueGrey,
-                                                spreadRadius: 1,
-                                                blurRadius: 10,
-                                              )
-                                            ]
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                                  '${colorSize?['color']} - Size ${colorSize['size']}'
+                                  ,
+                                      maxLines: 1, 
+                                  overflow: TextOverflow.ellipsis, 
+                                style:TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                    color: Color.fromARGB(255, 63, 63, 65),
+                                  )
+                          ), 
+                           Container(
+                                    width: 120,
+                                    height: 40,
+                                    child: Row( 
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.end, 
+                                      children: [
+                                        InkWell(
+                                          onTap: (){updateQuantity("minus", cart, cart['quantity']);},
+                                          child: Container(
+                                            padding: EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.blueGrey,
+                                                  spreadRadius: 1,
+                                                  blurRadius: 10,
+                                                )
+                                              ]
+                                            ),
+                                            child:Icon(CupertinoIcons.minus, 
+                                            size: 18,
+                                            ) ,
                                           ),
-                                          child:Icon(CupertinoIcons.minus, 
-                                          size: 18,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          child:Text (
+                                            cart['quantity'].toString(), 
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF4C53A5),
+                                            ) ,
                                           ) ,
                                         ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 10),
-                                        child:Text (
-                                          cart['quantity'].toString(), 
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF4C53A5),
-                                          ) ,
-                                        ) ,
-                                      ),
-                                      InkWell(
-                                        onTap: (){updateQuantity("add", cart, cart['quantity']);},
-                                        child: Container(
-                                          padding: EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(20),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.blueGrey,
-                                                spreadRadius: 1,
-                                                blurRadius: 10,
-                                              )
-                                            ]
+                                        InkWell(
+                                          onTap: (){updateQuantity("add", cart, cart['quantity']);},
+                                          child: Container(
+                                            padding: EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.blueGrey,
+                                                  spreadRadius: 1,
+                                                  blurRadius: 10,
+                                                )
+                                              ]
+                                            ),
+                                            child:Icon(CupertinoIcons.plus, 
+                                            size: 18,
+                                            ) ,
                                           ),
-                                          child:Icon(CupertinoIcons.plus, 
-                                          size: 18,
-                                          ) ,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ), 
-                        
-                      ],
+                                      ],
+                                    ),
+                                  ), 
+                          
+                        ],
+                      ),
                     )
                     ],
                   ),

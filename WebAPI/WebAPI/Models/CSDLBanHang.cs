@@ -402,8 +402,7 @@ public partial class CSDLBanHang : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.DateofBirth)
-                .HasColumnName("dateofBirth");
+          
                
         });
 
